@@ -39,19 +39,19 @@ El proyecto utiliza datasets balanceados de alta calidad para el entrenamiento, 
 
 ```mermaid
 graph TD
-    A[Código Fuente / Muestra CSV] --> B[Aplicación Local Dashboard]
-    B --> C[llm.py: Módulo Auditor]
-    C -->|Petición POST HTTP| D[Túnel Ngrok]
-    D -->|Inferencia T=0.0| E[Servidor LLM remoto en Kaggle/Colab]
-    E -->|JSON String (Puede estar truncado)| D
-    D -->|Respuesta Cruda| C
-    C -->|1. Reparación sintáctica de JSON| C
-    C -->|2. Validación de Esquema con Pydantic| F{¿Es Válido?}
-    F -->|Sí| G[Retornar Dict Validado]
-    F -->|No| H[Feedback Loop: Reintentar con el error adjunto como rol 'user']
-    H -->|Hasta 3 intentos| E
+    A["Código Fuente / Muestra CSV"] --> B["Aplicación Local Dashboard"]
+    B --> C["llm.py: Módulo Auditor"]
+    C -->|"Petición POST HTTP"| D["Túnel Ngrok"]
+    D -->|"Inferencia T=0.0"| E["Servidor LLM remoto en Kaggle/Colab"]
+    E -->|"JSON String (Puede estar truncado)"| D
+    D -->|"Respuesta Cruda"| C
+    C -->|"1. Reparación sintáctica de JSON"| C
+    C -->|"2. Validación de Esquema con Pydantic"| F{"¿Es Válido?"}
+    F -->|"Sí"| G["Retornar Dict Validado"]
+    F -->|"No"| H["Feedback Loop: Reintentar con el error adjunto como rol 'user'"]
+    H -->|"Hasta 3 intentos"| E
     G --> B
-    B --> I[Dashboard: Reportes / Comparativas / Gráficos]
+    B --> I["Dashboard: Reportes / Comparativas / Gráficos"]
 ```
 
 ---

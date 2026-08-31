@@ -1,0 +1,27 @@
+# Entornos virtuales de Python
+.venv/
+venv/
+ENV/
+env/
+
+# Caché de ejecución de Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Configuraciones de editores de código (opcional)
+.vscode/
+.idea/
+
+# Resultados de pruebas generadas localmente
+# Evitamos subir las corridas individuales para no ensuciar el repositorio,
+# pero permitimos los datasets en la carpeta datasets/
+Aplicacion/resultados/*.csv
+!Aplicacion/resultados/.gitkeep
