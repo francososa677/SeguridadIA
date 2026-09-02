@@ -711,12 +711,17 @@ function renderResultsTable() {
         const clasCorrect = String(row.acierto_clasificacion).toLowerCase() === 'true';
         const score = parseFloat(row.cvss_score) || 0;
 
+        const estadoPred = row.estado_predicho || (detCorrect ? (row.owasp_ground_truth === 'Seguro' ? 'SEGURO' : 'VULNERABLE') : (row.owasp_ground_truth === 'Seguro' ? 'VULNERABLE' : 'SEGURO'));
+        const owaspPredCell = (row.owasp_categoria_predicho && row.owasp_categoria_predicho !== 'No solicitado')
+            ? `<span class="mono" style="font-size:0.75rem">${escapeHTML(row.owasp_categoria_predicho)}</span>`
+            : `<span class="badge-boolean ${estadoPred === 'VULNERABLE' ? 'danger' : 'success'}">${escapeHTML(estadoPred)}</span>`;
+
         tr.innerHTML = `
             <td><strong>${escapeHTML(row.id)}</strong></td>
             <td><span class="badge-lang">${escapeHTML(row.lenguaje)}</span></td>
             <td><span class="mono">${escapeHTML(row.cwe_ground_truth)}</span></td>
             <td><span class="mono" style="font-size:0.75rem">${escapeHTML(row.owasp_ground_truth)}</span></td>
-            <td><span class="mono" style="font-size:0.75rem">${escapeHTML(row.owasp_categoria_predicho)}</span></td>
+            <td>${owaspPredCell}</td>
             <td><span class="badge-boolean ${detCorrect ? 'success' : 'danger'}">${detCorrect ? '✓' : '✗'}</span></td>
             <td><span class="badge-boolean ${clasCorrect ? 'success' : 'danger'}">${clasCorrect ? '✓' : '✗'}</span></td>
             <td><span class="cvss-badge ${getCvssClass(score)}">${score.toFixed(1)}</span></td>
