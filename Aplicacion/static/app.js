@@ -494,12 +494,14 @@ function renderPruebasGrid() {
 function pollPruebaStatus(pruebaId) {
     if (activePolls[pruebaId]) return; // already polling
 
-    const intervalId = setInterval(async () => {
+    const updateStatus = async () => {
         try {
             const res = await fetch(`/api/pruebas/${pruebaId}/status`);
             if (!res.ok) {
-                clearInterval(intervalId);
-                delete activePolls[pruebaId];
+                if (activePolls[pruebaId]) {
+                    clearInterval(activePolls[pruebaId]);
+                    delete activePolls[pruebaId];
+                }
                 return;
             }
 
@@ -535,15 +537,22 @@ function pollPruebaStatus(pruebaId) {
 
             // If completed or failed, stop polling and reload
             if (data.status !== 'running') {
-                clearInterval(intervalId);
-                delete activePolls[pruebaId];
+                if (activePolls[pruebaId]) {
+                    clearInterval(activePolls[pruebaId]);
+                    delete activePolls[pruebaId];
+                }
                 fetchPruebas(); // Reload all cards
             }
         } catch (e) {
             console.error('Error polling status:', e);
         }
-    }, 30000);
+    };
 
+    // Execute immediately
+    updateStatus();
+
+    // Schedule every 2 seconds (2000ms)
+    const intervalId = setInterval(updateStatus, 2000);
     activePolls[pruebaId] = intervalId;
 }
 
