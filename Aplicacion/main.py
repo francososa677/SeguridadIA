@@ -251,7 +251,8 @@ def run_benchmark_task(prueba_id: str, dataset_filename: str, output_filename: s
             estado_predicho = str(prediccion.get("estado", "ERROR")).strip().upper()
             owasp_predicho = str(prediccion.get("owasp_categoria", "ERROR")).strip()
             owasp_id_predicho = str(prediccion.get("owasp_id", "ERROR")).strip()
-            state["logs"].append(f"   -> ✅ Completado: {owasp_predicho} ({duracion}s)")
+            log_label = estado_predicho if owasp_predicho == "No solicitado" else owasp_predicho
+            state["logs"].append(f"   -> ✅ Completado: {log_label} ({duracion}s)")
             
         acierto_deteccion = (es_vulnerable_real and estado_predicho == "VULNERABLE") or (not es_vulnerable_real and estado_predicho == "SEGURO")
         acierto_clasificacion = owasp_real.upper() == owasp_predicho.upper()

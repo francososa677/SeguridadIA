@@ -794,14 +794,20 @@ function openDiffModal(rowId) {
     diffTitle.innerText = `Detalle del Caso: ${row.id}`;
     diffCweReal.innerText = row.cwe_ground_truth;
     diffOwaspReal.innerText = row.owasp_ground_truth;
-    diffOwaspPred.innerText = row.owasp_categoria_predicho;
+    const estadoPred = row.estado_predicho || (String(row.acierto_deteccion).toLowerCase() === 'true' ? (row.owasp_ground_truth === 'Seguro' ? 'SEGURO' : 'VULNERABLE') : (row.owasp_ground_truth === 'Seguro' ? 'VULNERABLE' : 'SEGURO'));
+    
+    diffOwaspPred.innerText = row.owasp_categoria_predicho && row.owasp_categoria_predicho !== 'No solicitado'
+        ? row.owasp_categoria_predicho
+        : `Detección: ${estadoPred}`;
 
     const score = parseFloat(row.cvss_score) || 0;
     diffCvss.innerText = score.toFixed(1);
     diffCvss.className = `cvss-badge ${getCvssClass(score)}`;
     diffVector.innerText = row.cvss_vector || 'Ninguno';
 
-    diffExplicacion.innerText = row.explicacion || 'No hay explicación disponible.';
+    diffExplicacion.innerText = (row.explicacion && row.explicacion !== 'No solicitada')
+        ? row.explicacion
+        : `⚡ Respuesta Minimalista del Agente: Estado = ${estadoPred}.\n(Nota: En este experimento con prompt minimalista, solo se le solicitó la clasificación binaria VULNERABLE/SEGURO al modelo, sin explicaciones adicionales).`;
 
     // Fill code views
     diffCodeOriginal.innerText = row.codigo_original || '// Código no disponible';
