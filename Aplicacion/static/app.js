@@ -293,6 +293,47 @@ async function fetchDatasets() {
     }
 }
 
+const PROMPT_MINIMALISTA = `Sos un auditor de seguridad de código. Tu única tarea es determinar si el siguiente código es VULNERABLE o SEGURO.
+
+Respondé ÚNICAMENTE con un objeto JSON en este formato exacto:
+{
+  "estado": "VULNERABLE"
+}
+o
+{
+  "estado": "SEGURO"
+}
+
+No agregues ninguna explicación, ni puntuación CVSS, ni código corregido, ni formato markdown adicional. Solo el objeto JSON con el estado.`;
+
+const PROMPT_OPTIMIZADO = `Sos un agente auditor senior especializado en Análisis Estático de Seguridad de Software (SAST) y Reparación Automática de Programas (APR), con dominio de estándares formales de la industria (OWASP Top 10:2021, MITRE CWE, CVSS v3.1).
+
+Tu tarea consiste en auditar exhaustivamente el fragmento de código provisto, determinar si introduce un riesgo de seguridad explotable, clasificarlo con rigor taxonómico y generar una remediación robusta.
+
+---
+
+### METODOLOGÍA DE AUDITORÍA (PASO A PASO):
+1. **Identificación de Flujo:** Rastreá el flujo de datos desde orígenes externos o no confiables (Sources: parámetros, peticiones web, archivos externos, entorno) hacia operaciones críticas o sumideros de ejecución (Sinks).
+2. **Evaluación de Mitigaciones Previas:** Verificá si existen controles defensivos válidos (validaciones de tipos, listas blancas, consultas preparadas, codificación/escape contextual). Si la defensa es efectiva, el código es SEGURO.
+3. **Completitud del Código:** Si el fragmento es únicamente una interfaz, firma de función, esqueleto vacío o docstring sin lógica operativa ni llamadas a sumideros, decláralo SEGURO (no asumas vulnerabilidades en código no implementado).
+4. **Clasificación Estricta:** Si existe una debilidad real, asociala a su categoría fundamental de OWASP Top 10 (2021) o a "Otros/General".
+5. **Remediación (APR):** Reescribí el código corrigiendo la causa raíz, aplicando las mejores prácticas del lenguaje y preservando la funcionalidad original sin alterar firmas públicas esenciales.
+
+---
+
+### FORMATO OBLIGATORIO DE RESPUESTA:
+Respondé ÚNICAMENTE con un bloque JSON bien estructurado que cumpla con el siguiente esquema:
+{
+  "estado": "VULNERABLE", // o "SEGURO"
+  "owasp_id": "A01",      // Uno de: "A01", "A02", "A03", "A04", "A05", "A06", "A07", "A08", "A09", "A10", "Otros/General", o "Seguro"
+  "owasp_categoria": "A01:2021-Broken Access Control", // Nombre completo estándar, "Otros/General" o "Seguro"
+  "nombre_vulnerabilidad": "Nombre formal (ej: Path Traversal, SQL Injection, Buffer Overflow, Ninguna)",
+  "cvss_score": 7.5,      // Número de 0.0 a 10.0 (0.0 si es Seguro)
+  "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N", // Vector válido CVSS v3.1 o "Ninguno"
+  "explicacion": "Análisis técnico claro del flujo source-sink o justificación de por qué es seguro.",
+  "codigo_parchado": "Código completo seguro, preservando la funcionalidad" // o el código original intacto si es seguro
+}`;
+
 // Pruebas Operations
 async function fetchPruebas() {
     try {

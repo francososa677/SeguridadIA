@@ -2,39 +2,36 @@ import requests
 import json
 import re
 import os
+from typing import Optional
 from pydantic import BaseModel, Field
 
 # ==============================================================================
 # CONFIGURACIÓN DEL ENTORNO Y NGROK
 # ==============================================================================
 
-# CONFIG_PATH: Ruta absoluta del archivo de configuración (config.json) en el mismo directorio.
 CONFIG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
 
 def obtener_ngrok_url():
     """
     Lee config.json para obtener la URL del túnel ngrok donde corre la API del LLM.
     Si el archivo no existe o falla la lectura, retorna una URL por defecto (fallback).
+    Garantiza remover barras inclinadas al final para evitar errores //chat.
     """
+    url = "https://jinx-dwindling-gloss.ngrok-free.dev"
     if os.path.exists(CONFIG_PATH):
         try:
             with open(CONFIG_PATH, "r") as f:
-                # Retorna el valor de NGROK_URL del JSON; si no existe, usa la URL predeterminada.
-                return json.load(f).get("NGROK_URL", "https://jinx-dwindling-gloss.ngrok-free.dev")
+                url = json.load(f).get("NGROK_URL", url)
         except:
             pass
-    return "https://jinx-dwindling-gloss.ngrok-free.dev"
+    return url.strip().rstrip("/")
 
-# NGROK_URL: Almacena la URL final resuelta que se usará para realizar las peticiones HTTP al LLM.
 NGROK_URL = obtener_ngrok_url()
 
 # ==============================================================================
 # PROMPT DEL SISTEMA (INSTRUCCIONES DE AUDITORÍA Y CONSERVADURISMO)
 # ==============================================================================
 
-# SYSTEM_PROMPT: Instrucciones detalladas de comportamiento que configuran al LLM para actuar como
-# un motor SAST (Análisis Estático) y APR (Reparación Automática). Define las reglas para la
-# clasificación de vulnerabilidades según el OWASP Top 10 y estrategias clave para evitar falsos positivos.
 SYSTEM_PROMPT = """Sos un agente auditor senior especializado en Análisis Estático de Seguridad de Software (SAST) y Reparación Automática de Programas (APR), con dominio de estándares formales de la industria (OWASP Top 10:2021, MITRE CWE, CVSS v3.1).
 
 Tu tarea consiste en auditar exhaustivamente el fragmento de código provisto, determinar si introduce un riesgo de seguridad explotable, clasificarlo con rigor taxonómico y generar una remediación robusta.
@@ -119,8 +116,7 @@ Respondé ÚNICAMENTE con un bloque JSON bien estructurado que cumpla con el sig
 class AuditResultModel(BaseModel):
     """
     Modelo Pydantic para validar y estructurar la salida devuelta por el LLM.
-    Define de forma estricta los campos requeridos y sus tipos de datos.
-    Si la respuesta del LLM no tiene esta estructura exacta, la validación fallará.
+    Define de forma estricta todos los campos requeridos para la auditoría completa SAST + APR.
     """
     estado: str = Field(description="Debe ser 'VULNERABLE' o 'SEGURO'")
     owasp_id: str = Field(description="ID de la categoría (ej: 'A01', 'A02', ..., 'Otros/General', 'Seguro')")
@@ -314,13 +310,10 @@ def auditar_codigo(codigo: str, lenguaje: str = "python") -> dict:
     exigiéndole que lo corrija de forma autónoma.
     """
     endpoint = f"{obtener_ngrok_url()}/chat"
-    # Cabecera para evitar la pantalla de advertencia intermedia de ngrok
     headers = {"ngrok-skip-browser-warning": "true"}
     
-    # Prompt del usuario estructurando el código a analizar
     prompt_usuario = f"Lenguaje: {lenguaje}\n\nCódigo:\n```{lenguaje}\n{codigo}\n```"
     
-    # Historial de mensajes inicial (System prompt + código)
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},
         {"role": "user", "content": prompt_usuario}

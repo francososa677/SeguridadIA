@@ -11,6 +11,7 @@ from fastapi import FastAPI, BackgroundTasks, HTTPException
 from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from typing import Optional
 from pydantic import BaseModel
 
 # Add parent dir to system path so we can import llm.py
@@ -57,7 +58,7 @@ class PruebaUpdate(BaseModel):
     descripcion: str
 
 # Helper functions to read/write pruebas.json
-def read_pruebas():
+def _raw_read_pruebas():
     if not os.path.exists(PRUEBAS_JSON_PATH):
         return []
     try:
@@ -70,6 +71,63 @@ def write_pruebas(pruebas):
     with open(PRUEBAS_JSON_PATH, "w", encoding="utf-8") as f:
         json.dump(pruebas, f, indent=2, ensure_ascii=False)
 
+def sync_pruebas_from_results():
+    pruebas = _raw_read_pruebas()
+    existing_files = {p.get("resultados_file") for p in pruebas if p.get("resultados_file")}
+    
+    changed = False
+    if os.path.exists(RESULTADOS_DIR):
+        for fname in os.listdir(RESULTADOS_DIR):
+            if fname.endswith(".csv") and fname not in existing_files:
+                fpath = os.path.join(RESULTADOS_DIR, fname)
+                try:
+                    df = pd.read_csv(fpath)
+                    total_casos = len(df)
+                    if total_casos == 0:
+                        continue
+                    
+                    acc_det = round(df["acierto_deteccion"].mean() * 100, 2) if "acierto_deteccion" in df.columns else 0.0
+                    acc_clas = round(df["acierto_clasificacion"].mean() * 100, 2) if "acierto_clasificacion" in df.columns else 0.0
+                    tiempo_prom = round(df["tiempo_segundos"].mean(), 2) if "tiempo_segundos" in df.columns else 0.0
+                    
+                    if fname.startswith("resultados_prueba_"):
+                        parts = fname.replace("resultados_prueba_", "").replace(".csv", "").split("_", 1)
+                        p_id = f"prueba_{parts[0]}" if not parts[0].startswith("prueba_") else parts[0]
+                        p_name = parts[1].replace("_", " ") if len(parts) > 1 else parts[0]
+                    else:
+                        p_id = f"prueba_{int(os.path.getmtime(fpath))}"
+                        p_name = fname.replace(".csv", "").replace("_", " ")
+                    
+                    status = "completed" if total_casos >= 300 else "canceled"
+                    
+                    nueva = {
+                        "id": p_id,
+                        "nombre": p_name,
+                        "descripcion": f"Prueba recuperada desde {fname}",
+                        "dataset": "dev_balanced_benchmark2.csv",
+                        "fecha_creacion": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(os.path.getmtime(fpath))),
+                        "status": status,
+                        "resultados_file": fname,
+                        "precision_deteccion": acc_det,
+                        "precision_clasificacion": acc_clas,
+                        "total_casos": 300 if total_casos >= 300 else total_casos,
+                        "casos_analizados": total_casos,
+                        "tiempo_promedio": tiempo_prom,
+                        "system_prompt": SYSTEM_PROMPT,
+                        "ultimo_indice_analizado": total_casos - 1
+                    }
+                    pruebas.append(nueva)
+                    changed = True
+                except Exception as e:
+                    print(f"Error sincronizando {fname}: {e}")
+                    
+    if changed:
+        write_pruebas(pruebas)
+
+def read_pruebas():
+    sync_pruebas_from_results()
+    return _raw_read_pruebas()
+
 def sanitize_filename(name: str) -> str:
     import unicodedata
     name = unicodedata.normalize('NFKD', name).encode('ascii', 'ignore').decode('ascii')
@@ -78,7 +136,7 @@ def sanitize_filename(name: str) -> str:
     return name.strip('_')
 
 def cleanup_stuck_pruebas():
-    pruebas = read_pruebas()
+    pruebas = _raw_read_pruebas()
     changed = False
     for p in pruebas:
         if p["status"] == "running":
@@ -98,6 +156,7 @@ def cleanup_stuck_pruebas():
         write_pruebas(pruebas)
 
 cleanup_stuck_pruebas()
+sync_pruebas_from_results()
 
 
 
@@ -320,6 +379,7 @@ def list_datasets():
 
 @app.get("/api/pruebas")
 def list_pruebas():
+    sync_pruebas_from_results()
     pruebas = read_pruebas()
     updated = False
     for p in pruebas:
