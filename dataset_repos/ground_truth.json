@@ -1,0 +1,326 @@
+[
+  {
+    "id": 1,
+    "repo": "python_pyjwt",
+    "archivo": "jwt/api_jwk.py",
+    "linea": 21,
+    "cwe_id": "CWE-22",
+    "owasp_categoria": "A01:2021-Broken Access Control",
+    "descripcion": "Lectura de archivos arbitrarios mediante Path Traversal al concatenar rutas relativas con os.path.join sin normalización ni límites."
+  },
+  {
+    "id": 2,
+    "repo": "python_pyjwt",
+    "archivo": "jwt/api_jwt.py",
+    "linea": 44,
+    "cwe_id": "CWE-502",
+    "owasp_categoria": "A08:2021-Software and Data Integrity Failures",
+    "descripcion": "Deserialización no confiable de objetos mediante pickle.loads() que permite ejecución de código arbitrario."
+  },
+  {
+    "id": 3,
+    "repo": "python_pyjwt",
+    "archivo": "jwt/jwks_client.py",
+    "linea": 36,
+    "cwe_id": "CWE-918",
+    "owasp_categoria": "A10:2021-Server-Side Request Forgery",
+    "descripcion": "Server-Side Request Forgery (SSRF) al descargar recursos JWKS de URLs externas sin validar direcciones de red privadas o loopback."
+  },
+  {
+    "id": 4,
+    "repo": "python_colorama",
+    "archivo": "colorama/ansitowin32.py",
+    "linea": 280,
+    "cwe_id": "CWE-78",
+    "owasp_categoria": "A03:2021-Injection",
+    "descripcion": "Inyección de comandos de sistema operativo por uso de subprocess.run con shell=True e interpolación directa de strings."
+  },
+  {
+    "id": 5,
+    "repo": "python_colorama",
+    "archivo": "colorama/initialise.py",
+    "linea": 35,
+    "cwe_id": "CWE-532",
+    "owasp_categoria": "A09:2021-Security Logging and Monitoring Failures",
+    "descripcion": "Exposición de información sensible y credenciales en archivos de log o salida estándar de depuración."
+  },
+  {
+    "id": 6,
+    "repo": "python_validators",
+    "archivo": "src/validators/between.py",
+    "linea": 16,
+    "cwe_id": "CWE-89",
+    "owasp_categoria": "A03:2021-Injection",
+    "descripcion": "Inyección SQL clásica por concatenación directa de variables de entrada en sentencia SQL sin parametrización."
+  },
+  {
+    "id": 7,
+    "repo": "python_validators",
+    "archivo": "src/validators/url.py",
+    "linea": 165,
+    "cwe_id": "CWE-117",
+    "owasp_categoria": "A09:2021-Security Logging and Monitoring Failures",
+    "descripcion": "Inyección en logs (Log Injection / CRLF) al concatenar cadenas no filtradas del usuario en el sistema de logging."
+  },
+  {
+    "id": 8,
+    "repo": "python_validators",
+    "archivo": "src/validators/card.py",
+    "linea": 12,
+    "cwe_id": "CWE-306",
+    "owasp_categoria": "A07:2021-Identification and Authentication Failures",
+    "descripcion": "Falta de autenticación o verificación de permisos en funciones críticas, permitiendo bypass mediante parámetros no validados."
+  },
+  {
+    "id": 9,
+    "repo": "python_flask_httpauth",
+    "archivo": "src/flask_httpauth.py",
+    "linea": 19,
+    "cwe_id": "CWE-798",
+    "owasp_categoria": "A07:2021-Identification and Authentication Failures",
+    "descripcion": "Uso de credenciales / claves maestras embebidas en texto plano dentro del código fuente."
+  },
+  {
+    "id": 10,
+    "repo": "python_flask_httpauth",
+    "archivo": "src/flask_httpauth.py",
+    "linea": 19,
+    "cwe_id": "CWE-208",
+    "owasp_categoria": "A02:2021-Cryptographic Failures",
+    "descripcion": "Verificación de secretos y tokens mediante comparación directa de cadenas susceptible a ataques de temporización."
+  },
+  {
+    "id": 11,
+    "repo": "python_flask_httpauth",
+    "archivo": "src/flask_httpauth.py",
+    "linea": 19,
+    "cwe_id": "CWE-215",
+    "owasp_categoria": "A05:2021-Security Misconfiguration",
+    "descripcion": "Configuración de seguridad defectuosa por activación de modo de depuración interactivo en entorno de ejecución."
+  },
+  {
+    "id": 12,
+    "repo": "javascript_node_jsonwebtoken",
+    "archivo": "verify.js",
+    "linea": 23,
+    "cwe_id": "CWE-78",
+    "owasp_categoria": "A03:2021-Injection",
+    "descripcion": "Ejecución arbitraria de comandos en Node.js mediante child_process.exec() con concatenación no sanitizada."
+  },
+  {
+    "id": 13,
+    "repo": "javascript_node_jsonwebtoken",
+    "archivo": "decode.js",
+    "linea": 5,
+    "cwe_id": "CWE-347",
+    "owasp_categoria": "A08:2021-Software and Data Integrity Failures",
+    "descripcion": "Bypass de verificación criptográfica al aceptar tokens sin firma con algoritmo 'none'."
+  },
+  {
+    "id": 14,
+    "repo": "javascript_node_jsonwebtoken",
+    "archivo": "sign.js",
+    "linea": 88,
+    "cwe_id": "CWE-532",
+    "owasp_categoria": "A09:2021-Security Logging and Monitoring Failures",
+    "descripcion": "Fuga de claves privadas y secretos criptográficos a través de logs de depuración en consola."
+  },
+  {
+    "id": 15,
+    "repo": "javascript_cors",
+    "archivo": "lib/index.js",
+    "linea": 161,
+    "cwe_id": "CWE-942",
+    "owasp_categoria": "A01:2021-Broken Access Control",
+    "descripcion": "Reflejo no validado del origen entrante en cabecera Access-Control-Allow-Origin con credenciales habilitadas."
+  },
+  {
+    "id": 16,
+    "repo": "javascript_cors",
+    "archivo": "lib/index.js",
+    "linea": 161,
+    "cwe_id": "CWE-215",
+    "owasp_categoria": "A05:2021-Security Misconfiguration",
+    "descripcion": "Fuga de direcciones IP internas y topología de red en cabeceras HTTP de respuesta personalizadas."
+  },
+  {
+    "id": 17,
+    "repo": "javascript_cookies",
+    "archivo": "index.js",
+    "linea": 313,
+    "cwe_id": "CWE-113",
+    "owasp_categoria": "A03:2021-Injection",
+    "descripcion": "Inserción directa de cabeceras HTTP sin filtrado de secuencias de escape CRLF (\\r\\n)."
+  },
+  {
+    "id": 18,
+    "repo": "javascript_cookies",
+    "archivo": "index.js",
+    "linea": 318,
+    "cwe_id": "CWE-1004",
+    "owasp_categoria": "A05:2021-Security Misconfiguration",
+    "descripcion": "Emisión de cookies sensibles de sesión sin el flag HttpOnly, exponiéndolas a robo mediante Cross-Site Scripting (XSS)."
+  },
+  {
+    "id": 19,
+    "repo": "javascript_cookies",
+    "archivo": "index.js",
+    "linea": 323,
+    "cwe_id": "CWE-330",
+    "owasp_categoria": "A02:2021-Cryptographic Failures",
+    "descripcion": "Generación de identificadores de sesión utilizando Math.random(), generador pseudoaleatorio predecible no apto para seguridad."
+  },
+  {
+    "id": 20,
+    "repo": "javascript_validatorjs",
+    "archivo": "src/index.js",
+    "linea": 253,
+    "cwe_id": "CWE-79",
+    "owasp_categoria": "A03:2021-Injection",
+    "descripcion": "Generación de marcado HTML dinámico interpolando entrada de usuario sin sanitizar ni codificar entidades."
+  },
+  {
+    "id": 21,
+    "repo": "javascript_validatorjs",
+    "archivo": "src/lib/isURL.js",
+    "linea": 58,
+    "cwe_id": "CWE-918",
+    "owasp_categoria": "A10:2021-Server-Side Request Forgery",
+    "descripcion": "Petición HTTP a URLs remotas arbitrarias sin validación de rangos de red locales o loopback (SSRF)."
+  },
+  {
+    "id": 22,
+    "repo": "c_cjson",
+    "archivo": "cJSON.c",
+    "linea": 2562,
+    "cwe_id": "CWE-120",
+    "owasp_categoria": "A06:2021-Memory Safety",
+    "descripcion": "Copia de memoria no acotada mediante strcpy() propensa a desbordamiento de búfer en memoria (Buffer Overflow)."
+  },
+  {
+    "id": 23,
+    "repo": "c_cjson",
+    "archivo": "cJSON.c",
+    "linea": 2562,
+    "cwe_id": "CWE-415",
+    "owasp_categoria": "A06:2021-Memory Safety",
+    "descripcion": "Liberación doble de memoria (Double Free) sobre el mismo puntero, provocando corrupción de heap o ejecución arbitraria."
+  },
+  {
+    "id": 24,
+    "repo": "c_cjson",
+    "archivo": "cJSON.c",
+    "linea": 2562,
+    "cwe_id": "CWE-674",
+    "owasp_categoria": "A04:2021-Insecure Design",
+    "descripcion": "Recursión no controlada sin límite de profundidad (Uncontrolled Recursion) que causa agotamiento de la pila (Stack Exhaustion / DoS)."
+  },
+  {
+    "id": 25,
+    "repo": "c_picohttpparser",
+    "archivo": "picohttpparser.c",
+    "linea": 411,
+    "cwe_id": "CWE-125",
+    "owasp_categoria": "A06:2021-Memory Safety",
+    "descripcion": "Lectura de memoria fuera de límites (Out-of-bounds Read) por falta de comprobación de offsets de longitud."
+  },
+  {
+    "id": 26,
+    "repo": "c_picohttpparser",
+    "archivo": "picohttpparser.c",
+    "linea": 411,
+    "cwe_id": "CWE-444",
+    "owasp_categoria": "A04:2021-Insecure Design",
+    "descripcion": "Interpretación inconsistente de cabeceras HTTP que facilita ataques de HTTP Request Smuggling entre proxies frontend y backend."
+  },
+  {
+    "id": 27,
+    "repo": "c_frozen",
+    "archivo": "frozen.c",
+    "linea": 1070,
+    "cwe_id": "CWE-476",
+    "owasp_categoria": "A06:2021-Memory Safety",
+    "descripcion": "Desreferencia de puntero NULL potencial ante cadenas nulas, provocando caída del proceso (Segmentation Fault / DoS)."
+  },
+  {
+    "id": 28,
+    "repo": "c_frozen",
+    "archivo": "frozen.c",
+    "linea": 1070,
+    "cwe_id": "CWE-134",
+    "owasp_categoria": "A03:2021-Injection",
+    "descripcion": "Format String Vulnerability al pasar una entrada externa no confiable como primer argumento de funciones de la familia printf()."
+  },
+  {
+    "id": 29,
+    "repo": "cpp_tinyxml2",
+    "archivo": "tinyxml2.cpp",
+    "linea": 128,
+    "cwe_id": "CWE-121",
+    "owasp_categoria": "A06:2021-Memory Safety",
+    "descripcion": "Desbordamiento de búfer en pila (Stack Buffer Overflow) por copia con strcpy a arreglo de tamaño fijo (32 bytes)."
+  },
+  {
+    "id": 30,
+    "repo": "cpp_tinyxml2",
+    "archivo": "tinyxml2.cpp",
+    "linea": 128,
+    "cwe_id": "CWE-776",
+    "owasp_categoria": "A04:2021-Insecure Design",
+    "descripcion": "Falta de restricción en expansión de entidades XML propensa a agotamiento masivo de memoria y CPU (XML Entity Expansion / DoS)."
+  },
+  {
+    "id": 31,
+    "repo": "go_securecookie",
+    "archivo": "securecookie.go",
+    "linea": 157,
+    "cwe_id": "CWE-338",
+    "owasp_categoria": "A02:2021-Cryptographic Failures",
+    "descripcion": "Generación de valores criptográficos o nonces con generadores predecibles / no criptográficos."
+  },
+  {
+    "id": 32,
+    "repo": "go_securecookie",
+    "archivo": "securecookie.go",
+    "linea": 157,
+    "cwe_id": "CWE-327",
+    "owasp_categoria": "A02:2021-Cryptographic Failures",
+    "descripcion": "Uso de funciones hash criptográficamente rotas y obsoletas (MD5) para verificación de integridad de datos."
+  },
+  {
+    "id": 33,
+    "repo": "go_gjson",
+    "archivo": "gjson.go",
+    "linea": 68,
+    "cwe_id": "CWE-22",
+    "owasp_categoria": "A01:2021-Broken Access Control",
+    "descripcion": "Path traversal en lectura de archivos de configuración JSON al concatenar rutas arbitrarias sin sanitización."
+  },
+  {
+    "id": 34,
+    "repo": "go_gjson",
+    "archivo": "gjson.go",
+    "linea": 68,
+    "cwe_id": "CWE-918",
+    "owasp_categoria": "A10:2021-Server-Side Request Forgery",
+    "descripcion": "Server-Side Request Forgery (SSRF) en descargador de esquemas remotos al no validar destinos de red."
+  },
+  {
+    "id": 35,
+    "repo": "java_javapoet",
+    "archivo": "src/main/java/com/squareup/javapoet/CodeWriter.java",
+    "linea": 46,
+    "cwe_id": "CWE-94",
+    "owasp_categoria": "A03:2021-Injection",
+    "descripcion": "Inyección directa de fragmentos de código Java (Code Injection) en el generador de código fuente sin validación sintáctica."
+  },
+  {
+    "id": 36,
+    "repo": "java_javapoet",
+    "archivo": "src/main/java/com/squareup/javapoet/CodeWriter.java",
+    "linea": 46,
+    "cwe_id": "CWE-732",
+    "owasp_categoria": "A05:2021-Security Misconfiguration",
+    "descripcion": "Asignación de permisos de archivo excesivamente permisivos (world-readable / world-writable) sobre recursos críticos generados."
+  }
+]

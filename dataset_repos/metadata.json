@@ -1,0 +1,122 @@
+[
+  {
+    "nombre": "pyjwt",
+    "lenguaje": "Python",
+    "carpeta": "python_pyjwt",
+    "url": "https://github.com/jpadilla/pyjwt.git",
+    "archivos_codigo_fuente": 26,
+    "descripcion": "Librería en Python para codificación, decodificación y verificación criptográfica de JSON Web Tokens (RFC 7519)."
+  },
+  {
+    "nombre": "colorama",
+    "lenguaje": "Python",
+    "carpeta": "python_colorama",
+    "url": "https://github.com/tartley/colorama.git",
+    "archivos_codigo_fuente": 23,
+    "descripcion": "Librería modular para renderizado de texto coloreado y gestión de secuencias de escape ANSI en consola multiplataforma."
+  },
+  {
+    "nombre": "validators",
+    "lenguaje": "Python",
+    "carpeta": "python_validators",
+    "url": "https://github.com/python-validators/validators.git",
+    "archivos_codigo_fuente": 64,
+    "descripcion": "Librería modular de validación y sanitización de datos (URLs, correos, dominios, inputs)."
+  },
+  {
+    "nombre": "Flask-HTTPAuth",
+    "lenguaje": "Python",
+    "carpeta": "python_flask_httpauth",
+    "url": "https://github.com/miguelgrinberg/Flask-HTTPAuth.git",
+    "archivos_codigo_fuente": 25,
+    "descripcion": "Extensión modular de Flask para autenticación HTTP básica, digest y por token."
+  },
+  {
+    "nombre": "node-jsonwebtoken",
+    "lenguaje": "JavaScript",
+    "carpeta": "javascript_node_jsonwebtoken",
+    "url": "https://github.com/auth0/node-jsonwebtoken.git",
+    "archivos_codigo_fuente": 46,
+    "descripcion": "Módulo de Node.js de Auth0 para firma, verificación y parseo de tokens JWT."
+  },
+  {
+    "nombre": "cors",
+    "lenguaje": "JavaScript",
+    "carpeta": "javascript_cors",
+    "url": "https://github.com/expressjs/cors.git",
+    "archivos_codigo_fuente": 6,
+    "descripcion": "Middleware modular de Express/Connect para gestión y configuración de cabeceras Cross-Origin Resource Sharing."
+  },
+  {
+    "nombre": "cookies",
+    "lenguaje": "JavaScript",
+    "carpeta": "javascript_cookies",
+    "url": "https://github.com/pillarjs/cookies.git",
+    "archivos_codigo_fuente": 6,
+    "descripcion": "Módulo de gestión, firma criptográfica y verificación de cookies HTTP para servidores Node.js."
+  },
+  {
+    "nombre": "validator.js",
+    "lenguaje": "JavaScript",
+    "carpeta": "javascript_validatorjs",
+    "url": "https://github.com/validatorjs/validator.js.git",
+    "archivos_codigo_fuente": 129,
+    "descripcion": "Librería de sanitización y validación de strings e inputs para Node.js y navegador."
+  },
+  {
+    "nombre": "cJSON",
+    "lenguaje": "C",
+    "carpeta": "c_cjson",
+    "url": "https://github.com/DaveGamble/cJSON.git",
+    "archivos_codigo_fuente": 101,
+    "descripcion": "Parser y serializador ultraliviano de JSON en ANSI C con manipulación dinámica de memoria."
+  },
+  {
+    "nombre": "picohttpparser",
+    "lenguaje": "C",
+    "carpeta": "c_picohttpparser",
+    "url": "https://github.com/h2o/picohttpparser.git",
+    "archivos_codigo_fuente": 4,
+    "descripcion": "Parser HTTP/1.x de alto rendimiento en C para peticiones, cabeceras y chunks."
+  },
+  {
+    "nombre": "frozen",
+    "lenguaje": "C",
+    "carpeta": "c_frozen",
+    "url": "https://github.com/cesanta/frozen.git",
+    "archivos_codigo_fuente": 3,
+    "descripcion": "Parser y generador de JSON diseñado para sistemas embebidos y seguridad de memoria en C/C++."
+  },
+  {
+    "nombre": "tinyxml2",
+    "lenguaje": "C++",
+    "carpeta": "cpp_tinyxml2",
+    "url": "https://github.com/leethomason/tinyxml2.git",
+    "archivos_codigo_fuente": 68,
+    "descripcion": "Parser DOM XML estructurado, modular y eficiente en C++ para integración directa en proyectos."
+  },
+  {
+    "nombre": "securecookie",
+    "lenguaje": "Go",
+    "carpeta": "go_securecookie",
+    "url": "https://github.com/gorilla/securecookie.git",
+    "archivos_codigo_fuente": 3,
+    "descripcion": "Paquete en Go para codificación, firma HMAC y cifrado simétrico autenticado de cookies."
+  },
+  {
+    "nombre": "gjson",
+    "lenguaje": "Go",
+    "carpeta": "go_gjson",
+    "url": "https://github.com/tidwall/gjson.git",
+    "archivos_codigo_fuente": 2,
+    "descripcion": "Librería en Go para parseo, extracción y navegación rápida de valores JSON."
+  },
+  {
+    "nombre": "javapoet",
+    "lenguaje": "Java",
+    "carpeta": "java_javapoet",
+    "url": "https://github.com/square/javapoet.git",
+    "archivos_codigo_fuente": 39,
+    "descripcion": "Librería modular de Square en Java para modelado de clases y generación de código fuente Java."
+  }
+]

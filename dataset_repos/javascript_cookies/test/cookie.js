@@ -1,0 +1,248 @@
+
+var assert = require('assert')
+var cookies = require('..')
+
+describe('new Cookie(name, value, [options])', function () {
+  it('should have correct constructor', function () {
+    var cookie = new cookies.Cookie('foo', 'bar')
+    assert.equal(cookie.constructor, cookies.Cookie)
+  })
+
+  it('should throw on invalid name', function () {
+    assert.throws(function () {
+      new cookies.Cookie('foo\n', 'bar')
+    }, /argument name is invalid/)
+    assert.throws(function () {
+      assert.ok(!new cookies.Cookie('foo=', 'bar'))
+    }, /argument name is invalid/)
+  })
+
+  it('should throw on invalid value', function () {
+    assert.throws(function () {
+      new cookies.Cookie('foo', 'bar\n')
+    }, /argument value is invalid/)
+    assert.throws(function () {
+      assert.ok(!new cookies.Cookie('foo', 'bar;'))
+    }, /argument value is invalid/)
+  })
+
+  it('should throw on invalid path', function () {
+    assert.throws(function () {
+      new cookies.Cookie('foo', 'bar', { path: '/\n' })
+    }, /option path is invalid/)
+  })
+
+  it('should throw on invalid domain', function () {
+    assert.throws(function () {
+      new cookies.Cookie('foo', 'bar', { domain: 'example.com\n' })
+    }, /option domain is invalid/)
+  })
+
+  //@see https://github.com/pillarjs/cookies/security/advisories/GHSA-x44v-5gxf-r6hf
+  it('should throw on path with a semicolon (attribute injection)', function () {
+    assert.throws(function () {
+      new cookies.Cookie('foo', 'bar', { path: '/; samesite=none' })
+    }, /option path is invalid/)
+  })
+
+  it('should throw on domain with a semicolon (attribute injection)', function () {
+    assert.throws(function () {
+      new cookies.Cookie('foo', 'bar', { domain: 'tenant.example.com; SameSite=None; Injected=yes' })
+    }, /option domain is invalid/)
+  })
+
+  it('should throw on domain with out-of-bounds characters', function () {
+    assert.throws(function () {
+      new cookies.Cookie('foo', 'bar', { domain: 'exa mple.com' })
+    }, /option domain is invalid/)
+    assert.throws(function () {
+      new cookies.Cookie('foo', 'bar', { domain: 'example.com/path' })
+    }, /option domain is invalid/)
+  })
+
+  it('should accept a valid path and serialize it', function () {
+    var cookie = new cookies.Cookie('foo', 'bar', { path: '/admin' })
+    assert.equal(cookie.toHeader(), 'foo=bar; path=/admin; httponly')
+  })
+
+  it('should accept a valid domain and serialize it', function () {
+    var cookie = new cookies.Cookie('foo', 'bar', { domain: '.example.com' })
+    assert.equal(cookie.toHeader(), 'foo=bar; path=/; domain=.example.com; httponly')
+  })
+
+  describe('options', function () {
+    describe('maxage', function () {
+      it('should set the .maxAge property', function () {
+        var cookie = new cookies.Cookie('foo', 'bar', { maxage: 86400 })
+        assert.equal(cookie.maxAge, 86400)
+      })
+
+      it('should set the .maxage property', function () {
+        var cookie = new cookies.Cookie('foo', 'bar', { maxage: 86400 })
+        assert.equal(cookie.maxage, 86400)
+      })
+    })
+
+    describe('maxAge', function () {
+      it('should set the .maxAge property', function () {
+        var cookie = new cookies.Cookie('foo', 'bar', { maxAge: 86400 })
+        assert.equal(cookie.maxAge, 86400)
+      })
+
+      it('should set the .maxage property', function () {
+        var cookie = new cookies.Cookie('foo', 'bar', { maxAge: 86400 })
+        assert.equal(cookie.maxage, 86400)
+      })
+
+      it('should throw on invalid value', function () {
+        assert.throws(function () {
+          new cookies.Cookie('foo', 'bar', { maxAge: 'foo' })
+        }, /option maxAge is invalid/)
+      })
+
+      it('should throw on Infinity', function () {
+        assert.throws(function () {
+          new cookies.Cookie('foo', 'bar', { maxAge: Infinity })
+        }, /option maxAge is invalid/)
+      })
+
+      it('should throw on NaN', function () {
+        assert.throws(function () {
+          new cookies.Cookie('foo', 'bar', { maxAge: NaN })
+        }, /option maxAge is invalid/)
+      })
+    })
+
+    describe('partitioned', function () {
+      it('should set the .partitioned property', function () {
+        var cookie = new cookies.Cookie('foo', 'bar', { partitioned: true })
+        assert.strictEqual(cookie.partitioned, true)
+      })
+
+      it('should default to false', function () {
+        var cookie = new cookies.Cookie('foo', 'bar')
+        assert.strictEqual(cookie.partitioned, false)
+      })
+
+      describe('when set to false', function () {
+        it('should not set partitioned attribute in header', function () {
+          var cookie = new cookies.Cookie('foo', 'bar', { partitioned: false })
+          assert.strictEqual(cookie.toHeader(), 'foo=bar; path=/; httponly')
+        })
+      })
+
+      describe('when set to true', function () {
+        it('should set partitioned attribute in header', function () {
+          var cookie = new cookies.Cookie('foo', 'bar', { partitioned: true })
+          assert.strictEqual(cookie.toHeader(), 'foo=bar; path=/; httponly; partitioned')
+        })
+      })
+    })
+
+    describe('priority', function () {
+      it('should set the .priority property', function () {
+        var cookie = new cookies.Cookie('foo', 'bar', { priority: 'low' })
+        assert.strictEqual(cookie.priority, 'low')
+      })
+
+      it('should default to undefined', function () {
+        var cookie = new cookies.Cookie('foo', 'bar')
+        assert.strictEqual(cookie.priority, undefined)
+      })
+
+      it('should throw on invalid value', function () {
+        assert.throws(function () {
+          new cookies.Cookie('foo', 'bar', { priority: 'foo' })
+        }, /option priority is invalid/)
+      })
+
+      describe('when set to "low"', function () {
+        it('should set "priority=low" attribute in header', function () {
+          var cookie = new cookies.Cookie('foo', 'bar', { priority: 'low' })
+          assert.strictEqual(cookie.toHeader(), 'foo=bar; path=/; priority=low; httponly')
+        })
+      })
+
+      describe('when set to "medium"', function () {
+        it('should set "priority=medium" attribute in header', function () {
+          var cookie = new cookies.Cookie('foo', 'bar', { priority: 'medium' })
+          assert.strictEqual(cookie.toHeader(), 'foo=bar; path=/; priority=medium; httponly')
+        })
+      })
+
+      describe('when set to "high"', function () {
+        it('should set "priority=high" attribute in header', function () {
+          var cookie = new cookies.Cookie('foo', 'bar', { priority: 'high' })
+          assert.strictEqual(cookie.toHeader(), 'foo=bar; path=/; priority=high; httponly')
+        })
+      })
+
+      describe('when set to "HIGH"', function () {
+        it('should set "priority=high" attribute in header', function () {
+          var cookie = new cookies.Cookie('foo', 'bar', { priority: 'HIGH' })
+          assert.strictEqual(cookie.toHeader(), 'foo=bar; path=/; priority=high; httponly')
+        })
+      })
+    })
+
+    describe('sameSite', function () {
+      it('should set the .sameSite property', function () {
+        var cookie = new cookies.Cookie('foo', 'bar', { sameSite: true })
+        assert.equal(cookie.sameSite, true)
+      })
+
+      it('should default to false', function () {
+        var cookie = new cookies.Cookie('foo', 'bar')
+        assert.equal(cookie.sameSite, false)
+      })
+
+      it('should throw on invalid value', function () {
+        assert.throws(function () {
+          new cookies.Cookie('foo', 'bar', { sameSite: 'foo' })
+        }, /option sameSite is invalid/)
+      })
+
+      describe('when set to "false"', function () {
+        it('should not set "samesite" attribute in header', function () {
+          var cookie = new cookies.Cookie('foo', 'bar', { sameSite: false })
+          assert.equal(cookie.toHeader(), 'foo=bar; path=/; httponly')
+        })
+      })
+
+      describe('when set to "true"', function () {
+        it('should set "samesite=strict" attribute in header', function () {
+          var cookie = new cookies.Cookie('foo', 'bar', { sameSite: true })
+          assert.equal(cookie.toHeader(), 'foo=bar; path=/; samesite=strict; httponly')
+        })
+      })
+
+      describe('when set to "lax"', function () {
+        it('should set "samesite=lax" attribute in header', function () {
+          var cookie = new cookies.Cookie('foo', 'bar', { sameSite: 'lax' })
+          assert.equal(cookie.toHeader(), 'foo=bar; path=/; samesite=lax; httponly')
+        })
+      })
+
+      describe('when set to "none"', function () {
+        it('should set "samesite=none" attribute in header', function () {
+          var cookie = new cookies.Cookie('foo', 'bar', { sameSite: 'none' })
+          assert.equal(cookie.toHeader(), 'foo=bar; path=/; samesite=none; httponly')
+        })
+      })
+
+      describe('when set to "strict"', function () {
+        it('should set "samesite=strict" attribute in header', function () {
+          var cookie = new cookies.Cookie('foo', 'bar', { sameSite: 'strict' })
+          assert.equal(cookie.toHeader(), 'foo=bar; path=/; samesite=strict; httponly')
+        })
+      })
+
+      describe('when set to "STRICT"', function () {
+        it('should set "samesite=strict" attribute in header', function () {
+          var cookie = new cookies.Cookie('foo', 'bar', { sameSite: 'STRICT' })
+          assert.equal(cookie.toHeader(), 'foo=bar; path=/; samesite=strict; httponly')
+        })
+      })
+    })
+  })
+})
