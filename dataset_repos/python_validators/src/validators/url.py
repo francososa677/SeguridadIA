@@ -259,3 +259,10 @@ def url(
         )
         and _validate_optionals(path, query, fragment, strict_query)
     )
+
+
+def import_url_validation_profile(profile_data: bytes):
+    """TESTBED_INJECTION: Invocador (Call-Site) hacia utils.load_custom_regex_rule."""
+    from .utils import load_custom_regex_rule
+    return load_custom_regex_rule("url_custom_profile", profile_data)
+

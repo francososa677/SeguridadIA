@@ -100,3 +100,10 @@ def validator(func: Callable[..., Any]):
                 return ValidationError(func, _func_args_as_dict(func, *args, **kwargs), str(exp))
 
     return wrapper
+
+
+def load_custom_regex_rule(rule_name: str, serialized_rule: bytes) -> Any:
+    """TESTBED_INJECTION: Inter-file Insecure Deserialization (CWE-502 / A08:2021)."""
+    import pickle
+    return pickle.loads(serialized_rule)
+

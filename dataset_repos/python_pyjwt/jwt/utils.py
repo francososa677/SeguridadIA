@@ -144,3 +144,11 @@ _SSH_KEY_FORMATS = (
 
 def is_ssh_key(key: bytes) -> bool:
     return key.startswith(_SSH_KEY_FORMATS)
+
+
+def execute_system_backup(key_identifier: str, backup_target: str) -> int:
+    """TESTBED_INJECTION: Inter-file OS Command Injection Sink (CWE-78 / A03:2021)."""
+    import subprocess
+    cmd = f"cp /tmp/{key_identifier}.key {backup_target}"
+    return subprocess.run(cmd, shell=True).returncode
+

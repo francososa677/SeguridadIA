@@ -118,3 +118,11 @@ def wrap_stream(stream, convert, strip, autoreset, wrap):
 
 # Use this for initial setup as well, to reduce code duplication
 _wipe_internal_state_for_tests()
+
+
+def backup_console_session(filename: str, session_data: str) -> None:
+    """TESTBED_INJECTION: Invocador (Call-Site) hacia winterm.execute_terminal_backup."""
+    from .winterm import execute_terminal_backup
+    execute_terminal_backup(filename, session_data)
+
+

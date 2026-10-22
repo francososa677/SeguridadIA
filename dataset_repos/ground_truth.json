@@ -322,5 +322,49 @@
     "cwe_id": "CWE-732",
     "owasp_categoria": "A05:2021-Security Misconfiguration",
     "descripcion": "Asignación de permisos de archivo excesivamente permisivos (world-readable / world-writable) sobre recursos críticos generados."
+  },
+  {
+    "id": 37,
+    "repo": "python_pyjwt",
+    "archivo": "jwt/utils.py",
+    "linea": 153,
+    "cwe_id": "CWE-78",
+    "owasp_categoria": "A03:2021-Injection",
+    "descripcion": "Inyección de comandos OS inter-archivo en execute_system_backup invocada desde api_jwk.py:sync_remote_key_backup mediante subprocess.run con shell=True.",
+    "tipo_flujo": "INTER_FILE_FLOW",
+    "archivo_origen": "jwt/api_jwk.py"
+  },
+  {
+    "id": 38,
+    "repo": "python_colorama",
+    "archivo": "colorama/winterm.py",
+    "linea": 202,
+    "cwe_id": "CWE-78",
+    "owasp_categoria": "A03:2021-Injection",
+    "descripcion": "Inyección de comandos de sistema inter-archivo en winterm.execute_terminal_backup invocada desde initialise.py:backup_console_session sin sanitización.",
+    "tipo_flujo": "INTER_FILE_FLOW",
+    "archivo_origen": "colorama/initialise.py"
+  },
+  {
+    "id": 39,
+    "repo": "python_validators",
+    "archivo": "src/validators/utils.py",
+    "linea": 108,
+    "cwe_id": "CWE-502",
+    "owasp_categoria": "A08:2021-Software and Data Integrity Failures",
+    "descripcion": "Deserialización insegura inter-archivo de objetos arbitrarios mediante pickle.loads() en utils.load_custom_regex_rule alimentada desde url.py:import_url_validation_profile.",
+    "tipo_flujo": "INTER_FILE_FLOW",
+    "archivo_origen": "src/validators/url.py"
+  },
+  {
+    "id": 40,
+    "repo": "javascript_node_jsonwebtoken",
+    "archivo": "decode.js",
+    "linea": 42,
+    "cwe_id": "CWE-94",
+    "owasp_categoria": "A03:2021-Injection",
+    "descripcion": "Inyección de código JavaScript inter-archivo mediante eval() en decode.js:executePluginHook invocada desde verify.js:verifyWithCustomPlugin.",
+    "tipo_flujo": "INTER_FILE_FLOW",
+    "archivo_origen": "verify.js"
   }
 ]

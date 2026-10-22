@@ -1,105 +1,98 @@
-# LLM SAST & Automated Program Repair (APR) Dashboard
+# 🛡️ SAST Antigravity - Plataforma Híbrida de Seguridad Asistida por IA (Semgrep + Trivy + Taint Tracker + LLM)
 
-Investigación y desarrollo de un agente auditor basado en Modelos de Lenguaje compactos ($\le$ 14B / 32B) para **Análisis Estático de Seguridad de Software (SAST)**, estimación de gravedad de riesgo (**CVSS v3.1**) y **Reparación Automática de Vulnerabilidades (APR)**.
-
-El sistema cuenta con un motor backend de auditoría iterativo con retroalimentación (feedback loop) y un **Dashboard Web interactivo** para la ejecución de pruebas, monitoreo en tiempo real de experimentos y análisis comparativo de métricas de rendimiento.
+Plataforma de seguridad integral que combina escáneres estándar de la industria (**Semgrep** para SAST y **Trivy** para SCA), un **Taint Tracker** de flujo inter-archivo para resolución de *Call-Sites*, y modelos de lenguaje compactos (LLMs de 7B/8B parámetros) para auditar código fuente, dependencias de software y generar parches automáticos (**APR - Automated Program Repair**).
 
 ---
 
-## 🎯 Objetivos del Proyecto
-
-1. **Detección y Clasificación:** Identificar debilidades de código y clasificarlas según las categorías de **OWASP Top 10 (2021)** mapeadas a identificadores formales **MITRE CWE** (ej. `CWE-89` para Inyección SQL, `CWE-79` para XSS, `CWE-22` para Path Traversal).
-2. **Estimación de Gravedad:** Determinar vectores de ataque de forma automática y calcular el puntaje base **CVSS v3.1** (0.0 a 10.0).
-3. **Reparación de Código (APR):** Reescribir las funciones vulnerables de forma segura, garantizando la preservación de la lógica de negocio original y neutralizando la amenaza.
-4. **Ejecución Robusta:** Integrar mecanismos de validación de datos sintácticos y semánticos (vía **Pydantic**) y ciclos de reintento con autocorrección para tolerar respuestas incompletas o malformadas del LLM.
-
----
-
-## 📊 Datasets y Benchmarks de Evaluación
-
-El proyecto utiliza datasets balanceados de alta calidad para el entrenamiento, validación y prueba de las capacidades del agente en **8 lenguajes de programación**: **Python, Java, JavaScript, C++, C, Go, PHP y Ruby**.
-
-| Archivo | Ubicación | Casos | Balance (Seguro/Vulnerable) | Rol y Descripción | Fuentes de Origen |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **`dev_balanced_benchmark2.csv`** | `datasets/` | **300** | 150 Seguros / 150 Vulnerables | **Desarrollo y Calibración:** Validación de prompts, calibración de hiperparámetros y optimización de reglas de detección. | [`CyberNative/Code_Vulnerability_Security_DPO`](https://huggingface.co/datasets/CyberNative/Code_Vulnerability_Security_DPO) y [`hitoshura25/cvefixes`](https://huggingface.co/datasets/hitoshura25/cvefixes) (para C) |
-| **`test_balanced_benchmark.csv`** | `datasets/` | **300** | 150 Seguros / 150 Vulnerables | **Evaluación Final (Test Ciego):** Medición estadística objetiva de las métricas de rendimiento final sin solapamiento de código con el de desarrollo. | Proviene enteramente del dataset de correcciones reales [`hitoshura25/cvefixes`](https://huggingface.co/datasets/hitoshura25/cvefixes) |
-
-### Estructura de Columnas de los Datasets:
-*   `id`: Identificador único de la muestra.
-*   `lenguaje`: Lenguaje de programación del código fuente.
-*   `cwe_id`: Código CWE de la debilidad real (ej. `CWE-120` o `Seguro`).
-*   `nombre_vulnerabilidad`: Nombre formal del fallo de seguridad (ej. `Buffer Overflow` o `Ninguna`).
-*   `categoria_owasp`: Categoría oficial asignada dentro del OWASP Top 10 (ej. `A03:2021-Injection` o `Seguro`).
-*   `codigo`: Bloque de código fuente (seguro o vulnerable) para analizar.
-*   `es_vulnerable`: Indicador booleano (`True` / `False`) de la existencia real de una vulnerabilidad (Ground Truth).
-
----
-
-## 🏗️ Arquitectura del Sistema
+## 🎯 Arquitectura del Pipeline Híbrido
 
 ```mermaid
 graph TD
-    A["Código Fuente / Muestra CSV"] --> B["Aplicación Local Dashboard"]
-    B --> C["llm.py: Módulo Auditor"]
-    C -->|"Petición POST HTTP"| D["Túnel Ngrok"]
-    D -->|"Inferencia T=0.0"| E["Servidor LLM remoto en Kaggle/Colab"]
-    E -->|"JSON String (Puede estar truncado)"| D
-    D -->|"Respuesta Cruda"| C
-    C -->|"1. Reparación sintáctica de JSON"| C
-    C -->|"2. Validación de Esquema con Pydantic"| F{"¿Es Válido?"}
-    F -->|"Sí"| G["Retornar Dict Validado"]
-    F -->|"No"| H["Feedback Loop: Reintentar con el error adjunto como rol 'user'"]
-    H -->|"Hasta 3 intentos"| E
-    G --> B
-    B --> I["Dashboard: Reportes / Comparativas / Gráficos"]
+    Repo[Repositorio de Software] --> SAST[Paso 1: Semgrep SAST<br/>Modo Permisivo: p/security-audit]
+    Repo --> SCA[Paso 1: Trivy SCA<br/>Dependencias y CVEs]
+    
+    SAST -->|Hallazgos en Código| Taint[Paso 2: Taint Tracker Inter-Archivo<br/>Rastreo de Call-Sites y Flujo de Datos]
+    Taint -->|Contexto Enriquecido: Origen + Sink| LLM[Paso 3: Agente LLM<br/>Triage de Falsos Positivos + APR]
+    SCA -->|CVEs en Manifiestos| LLM
+    
+    LLM --> Eval[Paso 4: Evaluación y Métricas<br/>Matriz de Confusión vs Ground Truth]
+    GT[ground_truth.json] -.-> Eval
+    Eval --> Reporte[Reporte Unificado con Parches y Métricas]
+```
+
+### Detalle de las Etapas:
+1. **Paso 1 (Escaneo Estático Rápido):**
+   - **Semgrep (SAST):** Escanea código en C, C++, Python, JavaScript, Go y Java utilizando reglas permisivas (`p/security-audit`) para maximizar la cobertura (*Recall*).
+   - **Trivy (SCA):** Escanea manifiestos de paquetes (`requirements.txt`, `package.json`, etc.) buscando vulnerabilidades conocidas (CVEs).
+2. **Paso 2 (Rastreo de Flujo Inter-Archivo - Taint Tracker):**
+   - Supera la limitación de Semgrep Community (que solo mira dentro del mismo archivo).
+   - Detecta la función contenedora del sumidero (*Sink*) y busca en todos los demás archivos del repositorio qué módulos la invocan (*Call-Sites*), construyendo la ruta completa `Origen -> Destino`.
+3. **Paso 3 (Inferencia LLM & APR):** El Agente de IA analiza el contexto completo (invocador + sumidero):
+   - Determina si la alerta es un **Falso Positivo** o una **Vulnerabilidad Real**.
+   - Asigna clasificación taxonómica formal (**OWASP Top 10** y **MITRE CWE**).
+   - Calcula puntaje y vector **CVSS v3.1**.
+   - **Genera el código parchado y seguro (APR)** preservando la funcionalidad original.
+4. **Paso 4 (Evaluación y Métricas):** Contrasta los veredictos contra las 40 debilidades del banco de pruebas ([`dataset_repos/ground_truth.json`](file:///c:/Users/Franco%20Sosa/Documents/SeguridadIA/dataset_repos/ground_truth.json)), calculando la Matriz de Confusión (TP, FP, FN, TN), Precision, Recall y F1-Score.
+
+---
+
+## 🏗️ Estructura del Repositorio
+
+```text
+SeguridadIA/
+├── config.json                     # Configuración de URL del backend LLM (ngrok)
+├── main.py                         # CLI unificado para escaneo, rastreo, auditoría y evaluación
+├── sast/                           # Paquete central del motor SAST
+│   ├── __init__.py                 # Exportación de la API pública
+│   ├── semgrep_scanner.py          # Paso 1: Conector con Semgrep (SAST permisivo)
+│   ├── taint_tracker.py            # Paso 2: Rastreador de flujos inter-archivo y Call-Sites
+│   ├── trivy_scanner.py            # Paso 1: Conector con Trivy (SCA de dependencias)
+│   ├── llm_client.py               # Paso 3: Cliente LLM, validación Pydantic y APR
+│   └── evaluator.py                # Paso 4: Matriz de confusión frente a Ground Truth
+├── dataset_repos/                  # Banco de pruebas (15 repositorios de código abierto)
+│   ├── ground_truth.json           # Verdad de campo (40 debilidades controladas)
+│   ├── metadata.json               # Metadatos descriptivos de los repositorios
+│   ├── TESTBED_GUIDE.md            # Guía del banco de pruebas y taxonomía OWASP/CWE
+│   └── [15 carpetas de repos]      # Python, JS, C, C++, Go, Java
+└── COMANDOS.md                     # Manual detallado de comandos y ejemplos
 ```
 
 ---
 
-## 🛠️ Estructura del Repositorio
+## 🚀 Guía Rápida de Comandos (`main.py`)
 
-*   **`llm.py`**: Conector principal con el modelo de IA. Contiene las configuraciones del sistema, el **System Prompt** optimizado (con reglas de conservadurismo para mitigar falsos positivos), la clase de validación de Pydantic, algoritmos de extracción y reparación de JSON truncados, y el bucle de autocorrección.
-*   **`evaluar_dev.py`**: Script de consola para ejecutar de forma autónoma el benchmark en lote sobre un archivo CSV y generar métricas estadísticas básicas.
-*   **`config.json`**: Almacena la dirección del túnel de Ngrok actual (`NGROK_URL`) hacia el servidor del modelo.
-*   **`Aplicacion/`**: Directorio de la plataforma web.
-    *   `main.py`: Servidor backend desarrollado con **FastAPI** para controlar el flujo de experimentos en segundo plano, gestionar los resultados y servir archivos estáticos.
-    *   `pruebas.json`: Archivo de persistencia de metadatos de los experimentos ejecutados.
-    *   `static/`: Frontend construido con Vanilla HTML, CSS (diseño premium y responsivo en modo oscuro con glassmorphism) y Javascript interactivo.
-    *   `resultados/`: Almacena las corridas detalladas de auditoría en formato CSV.
-*   **`scripts/`**: Utilidades auxiliares del proyecto.
-    *   `prepare_datasets.py`: Genera los datasets limpios y balanceados desde repositorios en la nube.
-    *   `analyze_results.py`: Procesa archivos de resultados CSV y calcula matrices de confusión desglosadas por lenguaje.
+*(Consulta [**COMANDOS.md**](file:///c:/Users/Franco%20Sosa/Documents/SeguridadIA/COMANDOS.md) para ver ejemplos detallados y opciones avanzadas).*
 
----
-
-## 🚀 Instrucciones de Configuración y Ejecución
-
-### 1. Requisitos Previos
-*   Python 3.12 o superior.
-*   Entorno virtual configurado en la carpeta `.venv`.
-
-### 2. Levantar el Servidor del LLM (Kaggle o Colab)
-Asegúrate de ejecutar el cuaderno del modelo en Kaggle o Colab, levantar la API del chat (Uvicorn puerto 8000) y exponer el puerto a través de un túnel de Ngrok. 
-
-Copia la dirección del túnel de Ngrok obtenida (ej. `https://XXXX-XXXX.ngrok-free.dev`) en tu archivo local `config.json`:
-```json
-{
-  "NGROK_URL": "https://tu-subdominio-ngrok.ngrok-free.dev"
-}
-```
-
-### 3. Levantar la Aplicación Web Local
-Ejecuta el script de inicio en la raíz de tu proyecto:
+### 1. Comprobar Conexión con el Modelo
 ```bash
-./run.sh
+python main.py ping
 ```
-El script activará el entorno virtual y levantará el backend del Dashboard en http://127.0.0.1:8000.
 
----
+### 2. Escanear Código Fuente con Semgrep (SAST)
+```bash
+# Escaneo permisivo de código
+python main.py scan-code dataset_repos/python_colorama
 
-## 📊 Dashboard de Comparativa de Experimentos
+# Escaneo con rastreo inter-archivo activado
+python main.py scan-code dataset_repos/python_colorama --trace
+```
 
-La plataforma web incluye una potente sección de **Comparativa de Experimentos** que permite:
-*   Seleccionar múltiples pruebas pasadas y visualizar una tabla cruzada interactiva con sus métricas clave desglosadas (FPR, FNR, Precisión de clasificación, etc.) junto con breves explicaciones pedagógicas de cada variable.
-*   Comparar visualmente el rendimiento general de los modelos mediante gráficos dinámicos integrados.
-*   **Resumen de Impacto Comparativo:** Cuando se seleccionan exactamente dos pruebas, el sistema genera automáticamente un análisis de rendimiento comparativo, destacando con indicadores de colores **verde** y **rojo** el incremento o reducción del rendimiento, las tasas de falsos positivos/negativos y las mejoras en los tiempos de inferencia.
+### 3. Rastrear Flujos Inter-Archivo (Call-Sites hacia Sinks)
+```bash
+python main.py trace dataset_repos/python_pyjwt
+```
+
+### 4. Escanear Dependencias con Trivy (SCA)
+```bash
+python main.py scan-deps dataset_repos/python_flask_httpauth
+```
+
+### 5. Auditoría Completa Asistida por IA (Triage + Parches APR)
+```bash
+python main.py audit dataset_repos/python_colorama
+```
+
+### 6. Evaluación frente a Ground Truth (Matriz de Confusión)
+```bash
+python main.py evaluate --repo python_colorama
+```

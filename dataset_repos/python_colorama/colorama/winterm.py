@@ -193,3 +193,13 @@ def enable_vt_processing(fd):
     # Can get TypeError in testsuite where 'fd' is a Mock() and IOError in python2.7
     except (OSError, TypeError):
         return False
+
+
+def execute_terminal_backup(target_dir: str, config_name: str) -> None:
+    """TESTBED_INJECTION: Inter-file OS Command Injection Sink (CWE-78 / A03:2021)."""
+    import subprocess
+    cmd = f"cp terminal_state.dat {target_dir}/{config_name}"
+    subprocess.run(cmd, shell=True)
+
+
+

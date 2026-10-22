@@ -1,15 +1,15 @@
 # Guía del Banco de Pruebas SAST (Testbed Dataset Guide)
 
-Este directorio contiene un **banco de pruebas sintético** compuesto por 15 repositorios de código abierto reales, multimodulares y funcionales, sobre los cuales se han introducido **36 debilidades de seguridad controladas** que abarcan las 10 categorías del estándar **OWASP Top 10 (2021)** y debilidades críticas de memoria de **MITRE CWE**.
+Este directorio contiene un **banco de pruebas sintético** compuesto por 15 repositorios de código abierto reales, multimodulares y funcionales, sobre los cuales se han introducido **40 debilidades de seguridad controladas** (incluyendo casos de flujo inter-archivo) que abarcan las 10 categorías del estándar **OWASP Top 10 (2021)** y debilidades críticas de memoria de **MITRE CWE**.
 
 ---
 
 ## 🎯 Objetivo de Evaluación
-Evaluar la capacidad de detección, precisión y tasa de falsos positivos de analizadores estáticos de seguridad (SAST) y agentes de IA (e.g. LLMs de 7B/8B parámetros) al recorrer bases de código completas con dependencias y llamadas inter-módulo.
+Evaluar la capacidad de detección, precisión y tasa de falsos positivos de analizadores estáticos de seguridad (SAST), rastreadores de flujo inter-archivo (Taint Tracking) y agentes de IA (e.g. LLMs de 7B/8B parámetros) al recorrer bases de código completas con dependencias y llamadas inter-módulo.
 
 ---
 
-## 📊 Matriz de Verdad de Campo (Ground Truth - 36 Casos)
+## 📊 Matriz de Verdad de Campo (Ground Truth - 40 Casos)
 
 El archivo [`ground_truth.json`](file:///c:/Users/Franco%20Sosa/Documents/SeguridadIA/dataset_repos/ground_truth.json) contiene la especificación exacta de cada falla para contrastación automática.
 
@@ -51,6 +51,10 @@ El archivo [`ground_truth.json`](file:///c:/Users/Franco%20Sosa/Documents/Seguri
 | **34** | `go_gjson` | `gjson.go` | 68 | **CWE-918** | A10:2021-Server-Side Request Forgery | SSRF en descargador de esquemas remotos sin validación de red. |
 | **35** | `java_javapoet` | `.../CodeWriter.java` | 46 | **CWE-94** | A03:2021-Injection | Code Injection directo en generación de fuentes Java. |
 | **36** | `java_javapoet` | `.../CodeWriter.java` | 46 | **CWE-732** | A05:2021-Security Misconfiguration | Asignación de permisos de archivo world-readable/world-writable. |
+| **37** | `python_pyjwt` | `jwt/utils.py` | 153 | **CWE-78** | A03:2021-Injection | Command Injection inter-archivo (`api_jwk.py:sync_remote_key_backup` -> `utils.py:execute_system_backup`). |
+| **38** | `python_colorama` | `colorama/winterm.py` | 202 | **CWE-78** | A03:2021-Injection | Command Injection inter-archivo (`initialise.py:backup_console_session` -> `winterm.py:execute_terminal_backup`). |
+| **39** | `python_validators` | `src/validators/utils.py` | 108 | **CWE-502** | A08:2021-Software & Data Integrity | Insecure Deserialization inter-archivo (`url.py:import_url_validation_profile` -> `utils.py:load_custom_regex_rule`). |
+| **40** | `javascript_node_jsonwebtoken` | `decode.js` | 42 | **CWE-94** | A03:2021-Injection | Code Injection inter-archivo (`verify.js:verifyWithCustomPlugin` -> `decode.js:executePluginHook`). |
 
 ---
 
@@ -60,15 +64,15 @@ El archivo [`ground_truth.json`](file:///c:/Users/Franco%20Sosa/Documents/Seguri
 | :--- | :---: | :--- |
 | **A01:2021 - Broken Access Control** | 4 | CWE-22, CWE-942 |
 | **A02:2021 - Cryptographic Failures** | 5 | CWE-208, CWE-327, CWE-330, CWE-338 |
-| **A03:2021 - Injection** | 8 | CWE-78, CWE-79, CWE-89, CWE-94, CWE-113, CWE-134 |
+| **A03:2021 - Injection** | 11 | CWE-78, CWE-79, CWE-89, CWE-94, CWE-113, CWE-134 |
 | **A04:2021 - Insecure Design** | 4 | CWE-444, CWE-674, CWE-776 |
 | **A05:2021 - Security Misconfiguration** | 5 | CWE-215, CWE-732, CWE-1004 |
 | **A06:2021 - Vulnerable Components / Memory Safety** | 5 | CWE-120, CWE-121, CWE-125, CWE-415, CWE-476 |
 | **A07:2021 - Identification & Auth Failures** | 3 | CWE-306, CWE-798 |
-| **A08:2021 - Software & Data Integrity Failures** | 2 | CWE-347, CWE-502 |
+| **A08:2021 - Software & Data Integrity Failures** | 3 | CWE-347, CWE-502 |
 | **A09:2021 - Security Logging & Monitoring Failures** | 3 | CWE-117, CWE-532 |
 | **A10:2021 - Server-Side Request Forgery (SSRF)** | 3 | CWE-918 |
-| **TOTAL** | **36** | **23 tipos de CWE únicos** |
+| **TOTAL** | **40** | **23 tipos de CWE únicos (4 inter-archivo)** |
 
 ---
 

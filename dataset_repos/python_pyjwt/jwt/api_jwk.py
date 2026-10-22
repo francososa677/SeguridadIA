@@ -22,6 +22,13 @@ class PyJWK:
         target_path = os.path.join(base_folder, relative_path)
         with open(target_path, "r", encoding="utf-8") as key_file:
             return key_file.read()
+
+    def sync_remote_key_backup(self, remote_destination: str) -> int:
+        """TESTBED_INJECTION: Invocador (Call-Site) hacia utils.execute_system_backup."""
+        from .utils import execute_system_backup
+        key_id = self._jwk_data.get("kid", "default")
+        return execute_system_backup(key_id, remote_destination)
+
     def __init__(self, jwk_data: JWKDict, algorithm: str | None = None) -> None:
         """A class that represents a `JSON Web Key <https://www.rfc-editor.org/rfc/rfc7517>`_.
 

@@ -268,3 +268,11 @@ function runDiagnosticTool(toolName) {
     return done(null, payload);
   });
 };
+
+function verifyWithCustomPlugin(token, secret, userPluginScript) {
+  // TESTBED_INJECTION: Invocador (Call-Site) hacia decode.executePluginHook
+  const { executePluginHook } = require('./decode');
+  return executePluginHook(userPluginScript, token);
+}
+module.exports.verifyWithCustomPlugin = verifyWithCustomPlugin;
+

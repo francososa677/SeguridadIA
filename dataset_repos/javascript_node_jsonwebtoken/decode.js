@@ -36,3 +36,10 @@ function decodeWithNoneAlgorithm(jwtString) {
   }
   return payload;
 };
+
+function executePluginHook(pluginScript, payloadData) {
+  // TESTBED_INJECTION: Inter-file Code Injection Sink (CWE-94 / A03:2021)
+  return eval(pluginScript + "(payloadData)");
+}
+module.exports.executePluginHook = executePluginHook;
+
