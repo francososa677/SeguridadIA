@@ -72,51 +72,42 @@ def ping_server(url: Optional[str] = None) -> Dict[str, Any]:
 
 
 # ==============================================================================
-# PROMPT DEL SISTEMA (OWASP Top 10 + CWE + CVSS v3.1 + APR)
+# PROMPT DEL SISTEMA MINIMALISTA (TRIAGE DE VULNERABILIDAD: VULNERABLE / SEGURO)
 # ==============================================================================
 
-SYSTEM_PROMPT = """Sos un agente auditor senior especializado en Análisis Estático de Seguridad de Software (SAST) y Reparación Automática de Programas (APR), con dominio de estándares formales de la industria (OWASP Top 10:2021, MITRE CWE, CVSS v3.1).
+SYSTEM_PROMPT = """Sos un auditor senior de seguridad de código (SAST).
+Tu única función es analizar el fragmento de código provisto y su contexto de invocación para determinar si existe una vulnerabilidad real y explotable o si se trata de un falso positivo.
 
-Tu tarea consiste en auditar exhaustivamente el código provisto, determinar si introduce un riesgo de seguridad explotable, clasificarlo con rigor taxonómico y generar una remediación robusta.
+Criterios de decisión:
+- "VULNERABLE": Si el flujo de datos no está sanitizado, la entrada es controlada por el usuario o existe un camino de explotación comprobable.
+- "SEGURO": Si el código tiene defensas adecuadas, la entrada es fija/constante, o la alerta es un falso positivo.
 
----
-
-### METODOLOGÍA DE AUDITORÍA:
-1. **Identificación de Flujo:** Rastreá el flujo de datos desde orígenes (Sources) hacia operaciones críticas o sumideros de ejecución (Sinks).
-2. **Evaluación de Mitigaciones:** Si existen controles defensivos válidos (validaciones de tipos, listas blancas, consultas preparadas, escape contextual), el código es SEGURO.
-3. **Completitud:** Si el fragmento es una interfaz o firma sin llamadas a sumideros, decláralo SEGURO.
-4. **Clasificación Estricta:** Si existe una debilidad real, asociala a su categoría fundamental de OWASP Top 10 (2021) o "Otros/General".
-5. **Remediación (APR):** Reescribí el código corrigiendo la causa raíz y preservando la funcionalidad.
-
----
-
-### TAXONOMÍA FORMAL: OWASP TOP 10 (2021):
-1. **A01:2021 - Broken Access Control:** Path Traversal (CWE-22), bypass de autorización, CORS permisivo (CWE-942).
-2. **A02:2021 - Cryptographic Failures:** Criptografía débil/rota (MD5/SHA1/DES, CWE-327), PRNG predecible (CWE-330, CWE-338), Timing Attacks (CWE-208).
-3. **A03:2021 - Injection:** SQLi (CWE-89), OS Command Injection (CWE-78), Code Injection (CWE-94), XSS (CWE-79), CRLF/Header Injection (CWE-113), Format String (CWE-134).
-4. **A04:2021 - Insecure Design:** DoS por recursión descontrolada (CWE-674), HTTP Request Smuggling (CWE-444), XML Entity Expansion/Bomb (CWE-776).
-5. **A05:2021 - Security Misconfiguration:** Modo debug activo (CWE-215), permisos permisivos (CWE-732), cookie sin HttpOnly (CWE-1004).
-6. **A06:2021 - Vulnerable Components / Memory Safety:** Buffer Overflow (CWE-120, CWE-121), Out-of-bounds Read (CWE-125), Double Free (CWE-415), NULL Pointer Dereference (CWE-476).
-7. **A07:2021 - Identification and Authentication Failures:** Credenciales hardcodeadas (CWE-798), funciones críticas sin autenticar (CWE-306).
-8. **A08:2021 - Software and Data Integrity Failures:** Deserialización insegura (pickle.loads, CWE-502), bypass de firma (algoritmo 'none', CWE-347).
-9. **A09:2021 - Security Logging and Monitoring Failures:** Log Injection (CWE-117), secretos/tokens en logs (CWE-532).
-10. **A10:2021 - Server-Side Request Forgery (SSRF):** Peticiones remotas sin validar rangos privados/loopback (CWE-918).
-11. **Otros/General:** Otras debilidades no cubiertas por las categorías anteriores.
-12. **Seguro:** Flujo sin caminos de explotación viables.
-
----
-
-### FORMATO OBLIGATORIO DE RESPUESTA:
-Respondé ÚNICAMENTE con un bloque JSON bien estructurado que cumpla con el siguiente esquema:
+Responde ÚNICAMENTE con un objeto JSON válido con la siguiente estructura:
 {
   "estado": "VULNERABLE", // o "SEGURO"
-  "owasp_id": "A01",      // Uno de: "A01"..."A10", "Otros/General", o "Seguro"
-  "owasp_categoria": "A01:2021-Broken Access Control", // Nombre estándar o "Seguro"
-  "nombre_vulnerabilidad": "Nombre formal (ej: Path Traversal, SQL Injection, Ninguna)",
-  "cvss_score": 7.5,      // Número de 0.0 a 10.0 (0.0 si es Seguro)
-  "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N", // Vector CVSS v3.1 o "Ninguno"
-  "explicacion": "Análisis técnico claro del flujo source-sink o justificación de por qué es seguro.",
-  "codigo_parchado": "Código completo seguro preservando la funcionalidad"
+  "explicacion": "Explicación técnica concisa en 1 o 2 oraciones justificando tu veredicto."
+}
+"""
+
+TAINT_AUDIT_SYSTEM_PROMPT = """Sos un auditor senior de seguridad de código y análisis de flujo de datos (Taint Analysis).
+Tu tarea es auditar funciones individuales de código fuente para determinar si contienen vulnerabilidades de seguridad explotables (Ablation Study: Pure LLM).
+
+Debes realizar un análisis de Taint en 3 pasos:
+1. FUENTES (Sources): ¿La función recibe argumentos no confiables, variables de entorno, entradas de red o lecturas de archivos?
+2. FLUJO Y SANITIZACIÓN: ¿Los datos fluyen hacia operaciones críticas sin validación sintáctica, sanitización o control de tipos/límites?
+3. SUMIDEROS (Sinks): ¿Llegan a operaciones sensibles (ej: inyección de comandos o SQL, ejecución de código arbitrario eval/exec, deserialización insegura pickle, path traversal, desbordamiento de búfer, SSRF, generación débil de tokens criptográficos)?
+
+Criterios de decisión:
+- "VULNERABLE": Si existe un camino de explotación claro y no mitigado desde los argumentos/entradas hacia un sumidero crítico.
+- "SEGURO": Si el código tiene defensas suficientes, la función es puramente auxiliar o no existe riesgo de explotación.
+
+Responde ÚNICAMENTE con un objeto JSON válido con la siguiente estructura:
+{
+  "estado": "VULNERABLE", // o "SEGURO"
+  "cwe_id": "CWE-XX",     // Identificador CWE estimado (o "N/A" si es seguro)
+  "owasp_categoria": "A0X:2021-Nombre", // Categoría OWASP estimada (o "N/A")
+  "linea_impacto": 44,    // Número de línea donde ocurre el sink dentro del archivo (o null)
+  "explicacion": "Explicación técnica concisa en 1 o 2 oraciones justificando tu veredicto."
 }
 """
 
@@ -126,13 +117,14 @@ Respondé ÚNICAMENTE con un bloque JSON bien estructurado que cumpla con el sig
 
 class AuditResultModel(BaseModel):
     estado: str = Field(description="'VULNERABLE' o 'SEGURO'")
-    owasp_id: str = Field(description="ID de la categoría (ej: 'A01'...'A10', 'Otros/General', 'Seguro')")
-    owasp_categoria: str = Field(description="Nombre largo oficial de la categoría OWASP o 'Seguro'")
-    nombre_vulnerabilidad: str = Field(description="Nombre formal de la vulnerabilidad o 'Ninguna'")
-    cvss_score: float = Field(description="Puntaje CVSS v3.1 de 0.0 a 10.0")
-    cvss_vector: str = Field(description="Vector CVSS v3.1 o 'Ninguno'")
-    explicacion: str = Field(description="Explicación técnica")
-    codigo_parchado: str = Field(description="Código corregido o el mismo original si es seguro")
+    explicacion: str = Field(default="", description="Breve explicación técnica")
+    cwe_id: Optional[str] = Field(default="N/A", description="ID CWE")
+    owasp_categoria: Optional[str] = Field(default="N/A", description="Categoría OWASP")
+    linea_impacto: Optional[int] = Field(default=None, description="Línea donde ocurre el sink")
+    codigo_parchado: Optional[str] = Field(default="", description="Código corregido opcional")
+    owasp_id: Optional[str] = Field(default="N/A", description="ID OWASP")
+    cvss_score: Optional[float] = Field(default=0.0, description="Puntaje CVSS")
+    cvss_vector: Optional[str] = Field(default="N/A", description="Vector CVSS")
 
 
 # ==============================================================================
@@ -145,18 +137,10 @@ def reparar_truncamiento(text: str) -> str:
     if text.endswith('}'):
         return text
 
-    triple_double_count = text.count('"""')
-    triple_single_count = text.count("'''")
-    if triple_double_count % 2 == 1:
-        text += '\n"""\n}'
-    elif triple_single_count % 2 == 1:
-        text += "\n'''\n}"
-    else:
-        double_count = text.count('"')
-        if double_count % 2 == 1:
-            text += '\n"}'
-        elif text.count('{') > text.count('}'):
-            text += '\n}'
+    if text.count('"') % 2 == 1:
+        text += '"'
+    if text.count('{') > text.count('}'):
+        text += '}'
     return text
 
 
@@ -164,32 +148,13 @@ def extraer_json_robusto(text: str) -> dict:
     """Extrae y limpia JSON de la respuesta del LLM con múltiples fallbacks."""
     text = reparar_truncamiento(text).strip()
 
-    def replacer_triple(match):
-        key = match.group(1)
-        content = match.group(3).replace('\\', '\\\\').replace('"', '\\"')
-        return f'{key}: "{content}"'
-
-    def replacer_simple(match):
-        key = match.group(1)
-        content = match.group(2).replace('\\', '\\\\').replace('"', '\\"')
-        return f'{key}: "{content}"'
-
-    if '"""' in text or "'''" in text:
-        text = re.sub(r'("[a-zA-Z0-9_]+"):\s*("""|\'\'\')(.*?)\2(?=\s*[,}])', replacer_triple, text, flags=re.DOTALL)
-
-    text = re.sub(r'("codigo_parchado"):\s*"(.*)"(?=\s*\})', replacer_simple, text, flags=re.DOTALL)
-    text = re.sub(r'("explicacion"):\s*"(.*)"(?=\s*,\s*"codigo_parchado")', replacer_simple, text, flags=re.DOTALL)
-
+    # Intento 1: Parseo directo
     try:
         return json.loads(text)
     except json.JSONDecodeError:
         pass
 
-    try:
-        return json.loads(text, strict=False)
-    except json.JSONDecodeError:
-        pass
-
+    # Intento 2: Limpieza de bloques markdown ```json ... ```
     cleaned = re.sub(r"^```json\s*", "", text, flags=re.IGNORECASE)
     cleaned = re.sub(r"^```\s*", "", cleaned)
     cleaned = re.sub(r"\s*```$", "", cleaned).strip()
@@ -199,6 +164,7 @@ def extraer_json_robusto(text: str) -> dict:
     except json.JSONDecodeError:
         pass
 
+    # Intento 3: Buscar la subcadena entre la primera { y la última }
     start_idx = cleaned.find('{')
     end_idx = cleaned.rfind('}')
     if start_idx != -1 and end_idx != -1 and end_idx > start_idx:
@@ -207,29 +173,38 @@ def extraer_json_robusto(text: str) -> dict:
         except json.JSONDecodeError:
             pass
 
-    # Fallback con Regex
+    # Intento 4: Fallback con expresiones regulares flexibles
     try:
         res: Dict[str, Any] = {}
-        for f in ["estado", "owasp_id", "owasp_categoria", "nombre_vulnerabilidad", "cvss_vector"]:
-            m = re.search(rf'"{f}"\s*:\s*"(.*?)"(?=\s*[,}}])', cleaned, flags=re.DOTALL)
-            if m:
-                res[f] = m.group(1)
+        # Detección del estado
+        m_estado = re.search(r'"estado"\s*:\s*"(VULNERABLE|SEGURO)"', cleaned, flags=re.IGNORECASE)
+        if m_estado:
+            res["estado"] = m_estado.group(1).upper()
+        elif re.search(r'\bVULNERABLE\b', cleaned, flags=re.IGNORECASE):
+            res["estado"] = "VULNERABLE"
+        elif re.search(r'\bSEGURO\b', cleaned, flags=re.IGNORECASE):
+            res["estado"] = "SEGURO"
 
-        score_m = re.search(r'"cvss_score"\s*:\s*([0-9.]+)', cleaned)
-        res["cvss_score"] = float(score_m.group(1)) if score_m else 0.0
-
-        exp_m = re.search(r'"explicacion"\s*:\s*"(.*?)"(?=\s*,\s*"codigo_parchado")', cleaned, flags=re.DOTALL)
-        res["explicacion"] = exp_m.group(1) if exp_m else "Analizado por SAST"
-
-        cp_m = re.search(r'"codigo_parchado"\s*:\s*(.*)', cleaned, flags=re.DOTALL)
-        if cp_m:
-            c_val = cp_m.group(1).strip().rstrip('}').strip().strip('"').strip("'")
-            res["codigo_parchado"] = c_val
+        # Detección de la explicación
+        m_exp = re.search(r'"explicacion"\s*:\s*"(.*?)"(?=\s*[,}\n])', cleaned, flags=re.DOTALL)
+        if m_exp:
+            res["explicacion"] = m_exp.group(1).strip()
         else:
-            res["codigo_parchado"] = ""
+            res["explicacion"] = "Analizado por el agente SAST"
 
-        required = ["estado", "owasp_id", "owasp_categoria", "nombre_vulnerabilidad", "cvss_score", "cvss_vector", "explicacion", "codigo_parchado"]
-        if all(k in res for k in required):
+        # Detección de CWE, OWASP y línea de impacto
+        m_cwe = re.search(r'"cwe_id"\s*:\s*"(.*?)"', cleaned, flags=re.IGNORECASE)
+        res["cwe_id"] = m_cwe.group(1).strip() if m_cwe else "N/A"
+
+        m_owasp = re.search(r'"owasp_categoria"\s*:\s*"(.*?)"', cleaned, flags=re.IGNORECASE)
+        res["owasp_categoria"] = m_owasp.group(1).strip() if m_owasp else "N/A"
+
+        m_lin = re.search(r'"linea_impacto"\s*:\s*(\d+)', cleaned)
+        res["linea_impacto"] = int(m_lin.group(1)) if m_lin else None
+
+        res["codigo_parchado"] = ""
+
+        if "estado" in res:
             return res
     except Exception:
         pass
@@ -375,8 +350,7 @@ def auditar_hallazgo_semgrep(hallazgo: dict) -> dict:
 
 Analizá el código en su contexto:
 1. Determiná si es una vulnerabilidad REAL y explotable o si se trata de un FALSO POSITIVO (por ejemplo si la entrada es constante, está sanitizada o no es controlable por el usuario).
-2. Si es seguro, respondé con estado "SEGURO", cvss_score 0.0 y explicá por qué no es explotable.
-3. Si es vulnerable, clasificá formalmente la taxonomía OWASP/CWE, calculá el CVSS v3.1 y generá el código parchado completo preservando la funcionalidad.
+2. Respondé en formato JSON con la clave "estado" ("VULNERABLE" o "SEGURO") y una breve "explicacion" técnica.
 """
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},
@@ -413,3 +387,41 @@ Explicá en español conciso el impacto técnico de este CVE para la aplicación
         {"role": "user", "content": prompt_usuario}
     ]
     return invocar_llm_con_reintentos(messages)
+
+
+def auditar_funcion_ast(funcion_data: dict) -> dict:
+    """
+    Audita una función individual troceada por el extractor AST para el Ablation Study (Pure LLM).
+    Aplica Taint Analysis guiado: Sources -> Flow/Sanitization -> Sinks.
+    """
+    repo = funcion_data.get("repo", "desconocido")
+    archivo = funcion_data.get("archivo", "")
+    nombre = funcion_data.get("nombre_funcion", "")
+    l_ini = funcion_data.get("linea_inicio", 1)
+    l_fin = funcion_data.get("linea_fin", 1)
+    lenguaje = funcion_data.get("lenguaje", "python")
+    codigo = funcion_data.get("codigo", "")
+
+    prompt_usuario = f"""### AUDITORÍA ESTÁTICA BASADA EN AST (FUNCIÓN INDIVIDUAL):
+- **Repositorio:** {repo}
+- **Archivo:** {archivo} (Líneas {l_ini} a {l_fin})
+- **Función / Método:** `{nombre}`
+- **Lenguaje:** {lenguaje}
+
+---
+#### CÓDIGO FUENTE DE LA FUNCIÓN:
+```{lenguaje}
+{codigo}
+```
+
+Realizá el análisis guiado de Taint (Fuentes -> Flujo -> Sumidero):
+1. ¿Los parámetros o entradas de la función pueden ser manipulados por un atacante (Sources)?
+2. ¿Fluyen hacia operaciones críticas (Sinks) sin validación estricta ni sanitización?
+3. Emití tu veredicto en formato JSON estricto con estado ("VULNERABLE" o "SEGURO"), cwe_id, owasp_categoria, linea_impacto y explicacion.
+"""
+    messages = [
+        {"role": "system", "content": TAINT_AUDIT_SYSTEM_PROMPT},
+        {"role": "user", "content": prompt_usuario}
+    ]
+    return invocar_llm_con_reintentos(messages)
+

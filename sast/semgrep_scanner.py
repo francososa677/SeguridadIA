@@ -58,8 +58,11 @@ def leer_fragmento_codigo(filepath: str, linea: int, ventana: int = 15) -> str:
         start = max(0, linea - ventana // 2 - 1)
         end = min(len(lines), linea + ventana // 2)
         
-        # Unimos las líneas seleccionadas y las devolvemos
-        return "".join(lines[start:end])
+        # Unimos las líneas seleccionadas y limitamos el tamaño máximo para proteger la memoria de la GPU
+        snippet = "".join(lines[start:end])
+        if len(snippet) > 2500:
+            snippet = snippet[:2500] + "\n... [Fragmento truncado por exceder 2500 caracteres (archivo minificado o extenso)] ..."
+        return snippet
     except Exception:
         # Si el archivo no se puede leer (por ejemplo, binario o permisos), devolvemos texto vacío
         return ""

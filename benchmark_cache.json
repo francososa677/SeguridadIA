@@ -1,0 +1,1494 @@
+{
+  "python_pyjwt::.github/dependabot.yml::3::package_managers.dependabot.dependabot-missing-cooldown.dependabot-missing-cooldown": {
+    "estado": "SEGURO",
+    "explicacion": "El archivo dependabot.yml contiene una configuración estática que no incluye un periodo de espera (cooldown) entre las actualizaciones de paquetes recién publicados. Sin embargo, esta configuración no permite que los usuarios controlen directamente el contenido del archivo ni introduce ninguna vulnerabilidad conocida relacionada con la inclusión de funcionalidad desde un origen no confiable. Por lo tanto, se considera un falso positivo.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 16.69
+  },
+  "python_pyjwt::.github/workflows/main.yml::37::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "La entrada 'matrix.python-version' no es controlada por el usuario y está definida dentro del workflow como una lista constante. No hay riesgo de reubicación silenciosa de etiquetas o ramas, ya que las versiones son fijas.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.22
+  },
+  "c_cjson::c_cjson/.github/workflows/CI.yml::30::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni realiza operaciones que requieran sanitización. La vulnerabilidad detectada por Semgrep se refiere a la utilización de referencias mutables como etiquetas o ramas, lo cual no afecta directamente al fragmento de código mostrado.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.2
+  },
+  "c_cjson::c_cjson/.github/workflows/CI.yml::76::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni flujos de datos que puedan ser manipulados. La referencia al componente 'actions/checkout' está fija y no es susceptible a cambios silenciosos debido a la reubicación de etiquetas o ramas. Además, no hay evidencia de que exista una dependencia insuficientemente confiable que pueda ser comprometida.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 9.74
+  },
+  "c_cjson::c_cjson/.github/workflows/ci-fuzz.yml::8::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código no contiene ninguna entrada controlada por el usuario ni realiza operaciones que requieran sanitización. La referencia al repositorio de acciones es fija y no depende de entradas externas.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 6.59
+  },
+  "c_cjson::c_cjson/.github/workflows/ci-fuzz.yml::13::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni flujos de datos que no estén sanitizados. Las acciones utilizadas son constantes y no dependen de entradas externas. Por lo tanto, no existe una vulnerabilidad real y explotable.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.71
+  },
+  "c_cjson::c_cjson/.github/workflows/ci-fuzz.yml::19::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código no contiene ninguna entrada controlada por el usuario ni utiliza referencias mutables como etiquetas o ramas. La acción 'google/oss-fuzz/infra/cifuzz/actions/run_fuzzers' se ejecuta con parámetros constantes definidos en el workflow, lo que minimiza el riesgo de ataques relacionados con la integridad del software.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.89
+  },
+  "c_picohttpparser::c_picohttpparser/.github/workflows/ci.yml::20::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "La referencia 'actions/checkout@v3' es una versión específica del acción, no una rama o etiqueta mutable. No hay riesgo de que sea reubicada por el propietario del repositorio, lo que evita las amenazas de ataque relacionadas con el uso de referencias mutables.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.82
+  },
+  "c_picohttpparser::c_picohttpparser/.github/workflows/release-reltest.yml::19::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "La referencia 'kazuho/reltest/master' es una rama fija y no es controlada por el usuario. Además, el uso de una versión específica ('v4') del acción 'actions/checkout' minimiza el riesgo de ataques de reubicación de etiquetas o ramas.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.44
+  },
+  "c_picohttpparser::c_picohttpparser/.github/workflows/release.yml::19::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "La referencia 'master' es una rama fija y no es controlada por el usuario. Además, el uso de 'actions/checkout@v4' con 'fetch-depth: 0' asegura que se obtenga toda la historia del repositorio, lo que minimiza riesgos relacionados con referencias mutables.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.02
+  },
+  "c_picohttpparser::c_picohttpparser/misc/release.rb::18::ruby.lang.security.dangerous-exec.dangerous-exec": {
+    "estado": "VULNERABLE",
+    "explicacion": "El método `run_command` utiliza `IO.popen` para ejecutar comandos que son formados a partir de los argumentos `*args`. No hay evidencia de que estos argumentos sean sanitzados o validados antes de ser utilizados en el comando. Esto puede permitir inyección de comandos si algún argumento es controlado por el usuario, lo que resultaría en una vulnerabilidad de inyección de código.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 9.99
+  },
+  "c_picohttpparser::c_picohttpparser/misc/release.rb::21::ruby.lang.security.dangerous-exec.dangerous-exec": {
+    "estado": "VULNERABLE",
+    "explicacion": "El método `system` es utilizado dentro del bloque `Dir.chdir`, lo que permite la ejecución de comandos pasados como argumentos. No hay evidencia de que esta entrada sea sanitizada o que esté controlada por el usuario fuera del alcance del código proporcionado. Por lo tanto, esto podría ser una vulnerabilidad a inyección de comandos.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.7
+  },
+  "c_picohttpparser::c_picohttpparser/misc/release.rb::38::ruby.lang.security.dangerous-exec.dangerous-exec": {
+    "estado": "SEGURO",
+    "explicacion": "La función `git_success?` utiliza `Dir.chdir` para cambiar el directorio actual y luego ejecuta el comando `system` con argumentos fijos (`['git', *args]`). La entrada `*args` es controlada internamente dentro de la función y no proviene directamente del usuario. Por lo tanto, no existe un riesgo de inyección de código.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.76
+  },
+  "cpp_tinyxml2::cpp_tinyxml2/.github/workflows/test.yml::34::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "La referencia 'actions/checkout@v4' es una versión específica del acción, no una rama o etiqueta mutable. No hay riesgo de que sea reubicada por el propietario del repositorio, lo que evita las amenazas de ataque relacionadas con el uso de referencias mutables.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.02
+  },
+  "cpp_tinyxml2::cpp_tinyxml2/.github/workflows/test.yml::35::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "La referencia 'actions/checkout@v4' es una versión específica del acción, no una rama o etiqueta mutable. No hay riesgo de que sea reubicada por el dueño de la acción, lo que evita las amenazas de ataque relacionadas con el cambio de contenido bajo el mismo nombre de rama o etiqueta.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.36
+  },
+  "cpp_tinyxml2::cpp_tinyxml2/.github/workflows/test.yml::36::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "La referencia 'actions/checkout@v4' es una versión específica del acción, no una rama o etiqueta mutable. No hay riesgo de que sea reubicada por el propietario del repositorio, lo que evita las amenazas relacionadas con ataques de cadena de suministro.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.85
+  },
+  "cpp_tinyxml2::cpp_tinyxml2/.github/workflows/test.yml::37::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "La referencia 'actions/checkout@v4' es una versión específica del acción, no una rama o etiqueta mutable. No hay riesgo de que sea reubicada por el propietario del repositorio, lo que evita las amenazas relacionadas con ataques de cadena de suministro.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.93
+  },
+  "cpp_tinyxml2::cpp_tinyxml2/docs/classtinyxml2_1_1_x_m_l_comment.html::227::html.security.plaintext-http-link.plaintext-http-link": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni realiza ninguna transmisión de información sensible en texto plano. La URL mencionada es parte de un comentario HTML y no representa una vulnerabilidad de transmisión en texto claro.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.32
+  },
+  "cpp_tinyxml2::cpp_tinyxml2/docs/classtinyxml2_1_1_x_m_l_comment.html::228::html.security.plaintext-http-link.plaintext-http-link": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni transmite información sensible de manera clara. La URL mencionada es parte de una documentación HTML y no representa una vulnerabilidad de transmisión en claro.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.04
+  },
+  "cpp_tinyxml2::cpp_tinyxml2/docs/classtinyxml2_1_1_x_m_l_declaration.html::229::html.security.plaintext-http-link.plaintext-http-link": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni realiza ninguna transmisión de información sensible en texto plano. La URL mencionada es parte de una documentación HTML y no representa una vulnerabilidad de seguridad.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 6.87
+  },
+  "cpp_tinyxml2::cpp_tinyxml2/docs/classtinyxml2_1_1_x_m_l_declaration.html::230::html.security.plaintext-http-link.plaintext-http-link": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni transmite información sensible de manera clara. La URL mencionada es parte de una documentación HTML y no representa una vulnerabilidad de transmisión en claro.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.03
+  },
+  "cpp_tinyxml2::cpp_tinyxml2/docs/classtinyxml2_1_1_x_m_l_document.html::289::html.security.plaintext-http-link.plaintext-http-link": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni realiza ninguna transmisión de información sensible en texto plano. La URL mencionada es parte de una documentación HTML y no representa una vulnerabilidad de seguridad.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 6.89
+  },
+  "cpp_tinyxml2::cpp_tinyxml2/docs/classtinyxml2_1_1_x_m_l_document.html::290::html.security.plaintext-http-link.plaintext-http-link": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni realiza ninguna transmisión de información sensible sin cifrado. La URL mencionada es parte de una documentación HTML y no representa una vulnerabilidad de transmisión en claro.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.23
+  },
+  "cpp_tinyxml2::cpp_tinyxml2/docs/classtinyxml2_1_1_x_m_l_element.html::437::html.security.plaintext-http-link.plaintext-http-link": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni realiza ninguna transmisión de información sensible en texto plano. La URL mencionada es parte de un comentario en el código que explica cómo usar la biblioteca TinyXML-2, por lo que no representa una vulnerabilidad.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.88
+  },
+  "cpp_tinyxml2::cpp_tinyxml2/docs/classtinyxml2_1_1_x_m_l_element.html::438::html.security.plaintext-http-link.plaintext-http-link": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni realiza ninguna transmisión de información sensible en texto plano. La URL mencionada es parte de una documentación HTML y no representa una vulnerabilidad de seguridad.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.07
+  },
+  "cpp_tinyxml2::cpp_tinyxml2/docs/classtinyxml2_1_1_x_m_l_node.html::241::html.security.plaintext-http-link.plaintext-http-link": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni transmite información sensible de forma clara. La URL mencionada es parte de una documentación HTML y no representa una vulnerabilidad de transmisión en claro.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.35
+  },
+  "cpp_tinyxml2::cpp_tinyxml2/docs/classtinyxml2_1_1_x_m_l_node.html::242::html.security.plaintext-http-link.plaintext-http-link": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni transmite información sensible de forma clara. La URL mencionada es parte de una documentación HTML y no representa una vulnerabilidad de seguridad.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.86
+  },
+  "cpp_tinyxml2::cpp_tinyxml2/docs/classtinyxml2_1_1_x_m_l_text.html::237::html.security.plaintext-http-link.plaintext-http-link": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni realiza ninguna transmisión de información sensible en texto plano. La URL mencionada es parte de un comentario en el código y no se utiliza para transmitir datos sensibles.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.53
+  },
+  "cpp_tinyxml2::cpp_tinyxml2/docs/classtinyxml2_1_1_x_m_l_text.html::238::html.security.plaintext-http-link.plaintext-http-link": {
+    "estado": "SEGURO",
+    "explicacion": "El texto proporcionado no contiene ninguna entrada controlada por el usuario ni transmite información sensible de manera clara. Es simplemente una documentación que menciona URLs HTTP sin revelar información confidencial.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 6.93
+  },
+  "cpp_tinyxml2::cpp_tinyxml2/docs/classtinyxml2_1_1_x_m_l_unknown.html::228::html.security.plaintext-http-link.plaintext-http-link": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni realiza ninguna transmisión de información sensible en texto plano. La URL mencionada es parte de un comentario HTML que explica cómo usar la clase `XMLPrinter` de TinyXML-2, por lo que no representa una vulnerabilidad de seguridad.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.5
+  },
+  "cpp_tinyxml2::cpp_tinyxml2/docs/classtinyxml2_1_1_x_m_l_unknown.html::229::html.security.plaintext-http-link.plaintext-http-link": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni realiza ninguna transmisión de información sensible en texto plano. La URL mencionada es parte de una documentación HTML y no representa una vulnerabilidad de seguridad.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.46
+  },
+  "cpp_tinyxml2::cpp_tinyxml2/docs/dynsections.js::83::javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp": {
+    "error": "Error de conexión con el LLM: 500 Server Error: Internal Server Error for url: https://jinx-dwindling-gloss.ngrok-free.dev/chat",
+    "tiempo_segundos": 7.62
+  },
+  "cpp_tinyxml2::cpp_tinyxml2/docs/index.html::81::html.security.plaintext-http-link.plaintext-http-link": {
+    "estado": "SEGURO",
+    "explicacion": "El enlace proporcionado en el fragmento de código es una URL HTTP que apunta a la documentación en línea de TinyXML-2. No hay evidencia de que esta URL sea controlada por el usuario ni que contenga información sensible que necesite ser transmitida de forma segura. Además, el uso de HTTP en este contexto no constituye una vulnerabilidad directa relacionada con la transmisión de información sensible.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 10.2
+  },
+  "cpp_tinyxml2::cpp_tinyxml2/docs/index.html::86::html.security.plaintext-http-link.plaintext-http-link": {
+    "estado": "SEGURO",
+    "explicacion": "El enlace al documento HTML de TinyXML-2 es una URL fija y no está controlada por el usuario. Además, la transmisión de información sensible a través de HTTP no es relevante en este caso, ya que solo se trata de enlaces a documentos web públicos.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.6
+  },
+  "cpp_tinyxml2::cpp_tinyxml2/docs/index.html::106::html.security.plaintext-http-link.plaintext-http-link": {
+    "estado": "SEGURO",
+    "explicacion": "El enlace proporcionado en el texto HTML es una URL HTTP clara que no contiene información sensible ni permite la ejecución remota de código. No hay evidencia de que esta URL sea controlada por el usuario o que su contenido pueda ser modificado, lo que minimiza el riesgo de una vulnerabilidad.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.52
+  },
+  "cpp_tinyxml2::cpp_tinyxml2/docs/index.html::209::html.security.plaintext-http-link.plaintext-http-link": {
+    "estado": "SEGURO",
+    "explicacion": "El enlace proporcionado en el HTML es una URL estática que no contiene información sensible ni es controlada por el usuario. No representa una vulnerabilidad de transmisión en claro.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 6.83
+  },
+  "cpp_tinyxml2::cpp_tinyxml2/docs/index.html::224::html.security.plaintext-http-link.plaintext-http-link": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni transmite información sensible de manera incriptada. Es simplemente contenido HTML estático que no representa una vulnerabilidad.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 6.77
+  },
+  "cpp_tinyxml2::cpp_tinyxml2/docs/jquery.js::2::javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp": {
+    "error": "Error de conexión con el LLM: 500 Server Error: Internal Server Error for url: https://jinx-dwindling-gloss.ngrok-free.dev/chat",
+    "tiempo_segundos": 8.78
+  },
+  "cpp_tinyxml2::cpp_tinyxml2/docs/jquery.js::2::javascript.lang.security.audit.prototype-pollution.prototype-pollution-loop.prototype-pollution-loop": {
+    "error": "Error de conexión con el LLM: 500 Server Error: Internal Server Error for url: https://jinx-dwindling-gloss.ngrok-free.dev/chat",
+    "tiempo_segundos": 8.48
+  },
+  "cpp_tinyxml2::cpp_tinyxml2/docs/jquery.js::34::javascript.browser.security.eval-detected.eval-detected": {
+    "error": "Error de conexión con el LLM: 500 Server Error: Internal Server Error for url: https://jinx-dwindling-gloss.ngrok-free.dev/chat",
+    "tiempo_segundos": 6.66
+  },
+  "go_gjson::go_gjson/.github/workflows/go.yml::17::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "La acción 'actions/checkout' se utiliza con una referencia fija ('v2') en lugar de una versión específica de commit SHA, lo que minimiza el riesgo de ataques de reubicación de etiquetas o ramas. Esta práctica es recomendada para mejorar la integridad del software y evitar problemas relacionados con las dependencias.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.65
+  },
+  "go_gjson::go_gjson/.github/workflows/go.yml::22::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código no contiene ninguna entrada controlada por el usuario ni realiza operaciones que requieran sanitización. La referencia utilizada en 'actions/checkout@v2' es una versión específica del acción, lo que evita problemas relacionados con referencias mutables.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.68
+  },
+  "go_gjson::go_gjson/.github/workflows/go.yml::25::yaml.github-actions.security.gha-curl-pipe-shell.gha-curl-pipe-shell": {
+    "estado": "VULNERABLE",
+    "explicacion": "El fragmento de código ejecuta 'curl' directamente dentro de un comando shell, lo que puede permitir la inyección de comandos si la URL remota es comprometida o falsificada. Esto representa una vulnerabilidad potencial de inyección de comandos (CWE-78).",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 10.49
+  },
+  "go_securecookie::go_securecookie/.github/workflows/issues.yml::18::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni realiza operaciones que requieran sanitización. La acción 'actions/add-to-project' no muestra evidencia de vulnerabilidades conocidas relacionadas con el uso de referencias mutables de etiquetas o ramas. Además, no hay indicio de que la entrada sea manipulable por el usuario en este contexto.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 9.22
+  },
+  "go_securecookie::go_securecookie/.github/workflows/security.yml::20::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código no contiene ninguna entrada controlada por el usuario ni utiliza referencias mutables como etiquetas o ramas. La acción 'actions/checkout' se ejecuta con una versión específica de Go definida en la matriz de trabajo, lo que evita cualquier riesgo asociado con referencias mutables.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.98
+  },
+  "go_securecookie::go_securecookie/.github/workflows/security.yml::23::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni realiza operaciones que requieran sanitización. La vulnerabilidad detectada por Semgrep se refiere a la utilización de referencias mutables como etiquetas o ramas, lo cual no afecta directamente al fragmento de código mostrado.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.28
+  },
+  "go_securecookie::go_securecookie/.github/workflows/security.yml::29::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni flujos de datos que no estén sanitizados. Las acciones de GitHub utilizadas son constantes y no dependen de entradas externas. Por lo tanto, no existe una vulnerabilidad real y explotable.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.1
+  },
+  "go_securecookie::go_securecookie/.github/workflows/security.yml::34::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni flujos de datos que puedan ser manipulados. Las acciones ejecutadas son referencias a componentes de GitHub Actions específicos y versionadas, lo que minimiza el riesgo de ataques de reubicación de etiquetas o ramas.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.49
+  },
+  "go_securecookie::go_securecookie/.github/workflows/test.yml::21::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código no contiene ninguna entrada controlada por el usuario ni utiliza referencias mutables como etiquetas o ramas. La acción 'actions/checkout' se ejecuta con versiones de Go fijas definidas en la matriz de trabajo, lo que evita cualquier riesgo relacionado con la manipulación de componentes externos.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 9.09
+  },
+  "go_securecookie::go_securecookie/.github/workflows/test.yml::24::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni utiliza referencias mutables como etiquetas o ramas. La acción 'actions/checkout' se ejecuta con versiones específicas de Go definidas en la matriz de trabajo, lo que evita problemas relacionados con la integridad del componente.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.81
+  },
+  "go_securecookie::go_securecookie/.github/workflows/test.yml::33::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni flujos de datos que puedan ser manipulados. La acción 'Run Tests' ejecuta pruebas unitarias en el proyecto Go, lo cual no implica ninguna vulnerabilidad relacionada con componentes insuficientemente confiables o fallos de integridad de software.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.6
+  },
+  "go_securecookie::go_securecookie/.github/workflows/verify.yml::20::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni utiliza una etiqueta o rama mutable. La acción 'actions/checkout' se ejecuta con una versión específica de Go definida en la matriz de trabajo, lo que evita cualquier riesgo asociado con la reubicación accidental de las ramas o etiquetas.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.4
+  },
+  "go_securecookie::go_securecookie/.github/workflows/verify.yml::23::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni realiza operaciones que requieran sanitización. La vulnerabilidad detectada por Semgrep se refiere a la utilización de referencias mutables como etiquetas o ramas, lo cual no afecta directamente al fragmento de código mostrado.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.19
+  },
+  "go_securecookie::go_securecookie/.github/workflows/verify.yml::29::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni realiza operaciones que requieran sanitización. Las referencias a componentes como 'actions/setup-go' y 'golangci/golangci-lint-action' son constantes y no están sujetas a cambios por parte del usuario. Por lo tanto, no existe una vulnerabilidad real.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.68
+  },
+  "java_javapoet::java_javapoet/.github/workflows/build.yml::9::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El uso de 'actions/checkout@v4' no presenta riesgo de inyección ni dependencia insegura ya que la versión específica ('v4') es fija y no es controlada por el usuario. Además, no hay evidencia de que esta acción utilice entradas variables o mutables.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.23
+  },
+  "java_javapoet::java_javapoet/.github/workflows/build.yml::11::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código no contiene ninguna entrada controlada por el usuario ni utiliza referencias mutables como etiquetas o ramas. La acción 'actions/checkout' se ejecuta con una versión específica ('v4'), lo que minimiza el riesgo de ataques de reubicación de componentes.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.99
+  },
+  "javascript_cookies::javascript_cookies/.github/dependabot.yml::3::package_managers.dependabot.dependabot-missing-cooldown.dependabot-missing-cooldown": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni flujos de datos que puedan ser inseguros. La configuración de Dependabot no incluye entradas variables que requieran sanitización. Por lo tanto, no se identifica ninguna vulnerabilidad real.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.8
+  },
+  "javascript_cookies::javascript_cookies/.github/dependabot.yml::8::package_managers.dependabot.dependabot-missing-cooldown.dependabot-missing-cooldown": {
+    "estado": "SEGURO",
+    "explicacion": "El archivo dependabot.yml no contiene ninguna entrada que pueda ser controlada por el usuario ni fluya hacia funciones inseguras. La configuración de Dependabot no presenta riesgos conocidos relacionados con la inclusión de funcionalidad de fuentes no confiables.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.68
+  },
+  "javascript_cookies::javascript_cookies/.github/workflows/ci.yml::159::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni flujos de datos que no estén sanitizados. La referencia al componente 'actions/checkout' está fija y no es susceptible a ser modificada por el usuario. Por lo tanto, no se considera una vulnerabilidad real.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.2
+  },
+  "javascript_cookies::javascript_cookies/.github/workflows/ci.yml::227::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni flujos de datos que puedan ser manipulados. La acción 'actions/checkout' se refiere a una versión específica mediante su SHA, lo que evita problemas relacionados con referencias mutables de etiquetas o ramas.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.31
+  },
+  "javascript_cookies::javascript_cookies/.github/workflows/ci.yml::241::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El uso de 'actions/checkout' en GitHub Actions no es vulnerable porque la referencia utilizada ('v4') es una versión específica y no es controlada por el usuario. Además, el problema descrito en la regla Semgrep se refiere a la posibilidad de que las referencias de etiquetas o ramas sean modificadas, lo cual no aplica en este caso ya que se utiliza una versión específica del acción.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 9.69
+  },
+  "javascript_cookies::javascript_cookies/.github/workflows/ci.yml::248::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni flujos de datos que puedan ser manipulados. La referencia utilizada (`actions/checkout@v4`) es una versión específica del acción, lo que evita problemas relacionados con el cambio de referencias de etiquetas o ramas. Además, no hay evidencia de que el código esté utilizando entradas externas o mutables que podrían ser comprometidas.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 10.72
+  },
+  "javascript_cookies::javascript_cookies/.github/workflows/ci.yml::258::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni utiliza referencias mutables como etiquetas o ramas. La acción 'coverallsapp/github-action' se ejecuta con un token de GitHub que es una variable de entorno segura, lo que minimiza el riesgo de ataques de cadena de suministro.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 16.11
+  },
+  "javascript_cookies::javascript_cookies/.github/workflows/codeql.yml::44::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni realiza operaciones que requieran sanitización. La referencia 'actions/checkout@v4' es una versión específica del acción, lo que evita problemas relacionados con referencias mutables como tags o ramas. Por lo tanto, no existe una vulnerabilidad real.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.7
+  },
+  "javascript_cookies::javascript_cookies/.github/workflows/codeql.yml::48::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni flujos de datos que puedan ser manipulados por el usuario. La referencia 'actions/checkout@v4' es una versión específica del acción, lo que impide que sea reemplazada por otra versión sin autorización. Por lo tanto, no existe una vulnerabilidad real y explotable.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 9.52
+  },
+  "javascript_cookies::javascript_cookies/.github/workflows/codeql.yml::58::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni ninguna operación que pueda ser manipulada por terceros. La alerta se refiere a una práctica recomendada para evitar ataques de reubicación de etiquetas o ramas, pero no afecta directamente al código proporcionado.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.54
+  },
+  "javascript_cookies::javascript_cookies/.github/workflows/codeql.yml::71::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni realiza operaciones que requieran sanitización. La alerta se refiere a la configuración de GitHub Actions y no afecta directamente al código fuente que se está analizando.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.53
+  },
+  "javascript_cookies::javascript_cookies/index.js::262::javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp": {
+    "estado": "VULNERABLE",
+    "explicacion": "El código utiliza `RegExp()` con una expresión regular generada dinámicamente basada en la entrada del usuario (`name`). Esto puede permitir un ataque de Denegación de Servicio por Expresiones Regulares (ReDoS), ya que las expresiones regulares pueden volverse muy complejas y bloquear el hilo principal de ejecución.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 9.0
+  },
+  "javascript_cors::javascript_cors/.github/dependabot.yml::3::package_managers.dependabot.dependabot-missing-cooldown.dependabot-missing-cooldown": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni flujos de datos que puedan ser inseguros. La configuración de Dependabot no incluye entradas variables que requieran sanitización. Por lo tanto, no se identifica ninguna vulnerabilidad real.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.97
+  },
+  "javascript_cors::javascript_cors/.github/dependabot.yml::8::package_managers.dependabot.dependabot-missing-cooldown.dependabot-missing-cooldown": {
+    "estado": "SEGURO",
+    "explicacion": "El archivo dependabot.yml contiene configuraciones estáticas para actualizaciones de paquetes, sin entradas controladas por el usuario ni flujos de datos que puedan ser inseguros. La falta de un periodo de espera (cooldown) no constituye una vulnerabilidad directa en este contexto.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.29
+  },
+  "javascript_node_jsonwebtoken::javascript_node_jsonwebtoken/.github/workflows/sca-scan.yml::10::yaml.github-actions.security.secrets-inherit.secrets-inherit": {
+    "estado": "VULNERABLE",
+    "explicacion": "El uso de 'secrets: inherit' permite que el workflow llamado reciba todos los secretos del repositorio, lo cual viola el principio de privilegios mínimos. Esto puede permitir a un atacante acceder a todos los secretos del repositorio si el workflow llamado es comprometido o proveniente de una fuente externa.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 9.19
+  },
+  "javascript_node_jsonwebtoken::javascript_node_jsonwebtoken/decode.js::42::javascript.browser.security.eval-detected.eval-detected": {
+    "estado": "VULNERABLE",
+    "explicacion": "El uso de `eval()` en la función `executePluginHook` permite la ejecución dinámica de código basado en la entrada `pluginScript`, que puede ser controlada por el usuario. Esto representa una vulnerabilidad potencial a inyección de código.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 11.91
+  },
+  "javascript_node_jsonwebtoken::javascript_node_jsonwebtoken/verify.js::25::javascript.lang.security.detect-child-process.detect-child-process": {
+    "estado": "VULNERABLE",
+    "explicacion": "La función `runDiagnosticTool` ejecuta un comando externo utilizando `exec`, lo que podría permitir una inyección de comandos si `toolName` es controlado por el usuario. No hay evidencia de que `toolName` esté sanitizado antes de ser utilizado en el comando.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.28
+  },
+  "javascript_validatorjs::javascript_validatorjs/.github/workflows/ci.yml::13::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código no contiene ninguna entrada controlada por el usuario ni utiliza referencias mutables como etiquetas o ramas. La acción 'actions/checkout' se configura para usar una rama específica ('master'), lo que evita problemas relacionados con la reubicación de las ramas por parte del propietario de la acción.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.67
+  },
+  "javascript_validatorjs::javascript_validatorjs/.github/workflows/ci.yml::17::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni realiza operaciones que requieran sanitización. La acción 'actions/checkout' se refiere a una versión específica del repositorio (v4), lo que minimiza el riesgo de ataques de reubicación de etiquetas o ramas.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 23.46
+  },
+  "javascript_validatorjs::javascript_validatorjs/.github/workflows/ci.yml::25::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni realiza operaciones que requieran sanitización. Además, no hay ninguna referencia a tags o ramas mutables que puedan ser comprometidas. Por lo tanto, no se considera una vulnerabilidad real.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.0
+  },
+  "javascript_validatorjs::javascript_validatorjs/.github/workflows/ci.yml::45::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni realiza operaciones que requieran sanitización. La acción 'actions/checkout' se utiliza para clonar el repositorio, lo cual no implica riesgo de inyección o manipulación de entradas.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.29
+  },
+  "javascript_validatorjs::javascript_validatorjs/.github/workflows/ci.yml::49::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni flujos de datos que puedan ser manipulados. La acción 'actions/checkout' se refiere a una versión específica del repositorio (v4), lo que evita problemas relacionados con referencias mutables de etiquetas o ramas. Además, no hay evidencia de que el código esté utilizando entradas no confiables o que pueda ser explotado mediante ataques de reubicación de componentes.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 11.16
+  },
+  "javascript_validatorjs::javascript_validatorjs/.github/workflows/ci.yml::51::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni flujos de datos que puedan ser manipulados. Todas las referencias son constantes y predefinidas en el archivo de configuración de GitHub Actions.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.37
+  },
+  "javascript_validatorjs::javascript_validatorjs/.github/workflows/ci.yml::60::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni realiza operaciones que requieran sanitización. Además, no hay ninguna referencia mutable a tags o ramas, lo que minimiza el riesgo de ataques relacionados con la manipulación de componentes de la cadena de suministro.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 23.14
+  },
+  "javascript_validatorjs::javascript_validatorjs/.github/workflows/codeql-analysis.yml::41::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni flujos de datos que puedan ser manipulados. La referencia utilizada (`actions/checkout@v4`) es una versión específica del acción, lo que evita problemas relacionados con el cambio silencioso de referencias de etiquetas o ramas. Por lo tanto, no existe una vulnerabilidad real.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 9.19
+  },
+  "javascript_validatorjs::javascript_validatorjs/.github/workflows/codeql-analysis.yml::45::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código no contiene ninguna entrada controlada por el usuario ni realiza operaciones que requieran sanitización. La referencia 'actions/checkout@v4' es una versión específica del acción, lo que evita problemas relacionados con el uso de ramas o etiquetas mutables.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 11.9
+  },
+  "javascript_validatorjs::javascript_validatorjs/.github/workflows/codeql-analysis.yml::56::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni flujos de datos que puedan ser manipulados. La alerta se refiere a la configuración de GitHub Actions y no implica una vulnerabilidad directamente relacionada con el código fuente que estás analizando.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.29
+  },
+  "javascript_validatorjs::javascript_validatorjs/.github/workflows/codeql-analysis.yml::70::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni realiza operaciones que requieran sanitización. La acción 'github/codeql-action/analyze' no utiliza entradas variables y está definida como una versión específica ('v3'), lo que minimiza los riesgos asociados con componentes externos.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.19
+  },
+  "javascript_validatorjs::javascript_validatorjs/.github/workflows/npm-publish.yml::13::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni utiliza referencias mutables como etiquetas o ramas. La acción 'actions/checkout' se ejecuta con una versión específica ('v4'), lo que minimiza el riesgo de ataques de reubicación de componentes. Además, no hay evidencia de que la entrada sea manipulada o que exista un camino de explotación comprobable.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 10.03
+  },
+  "javascript_validatorjs::javascript_validatorjs/.github/workflows/npm-publish.yml::18::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni utiliza referencias mutables como etiquetas o ramas. Todas las acciones son constantes y predefinidas, lo que minimiza el riesgo de ataques relacionados con la integridad del software.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.84
+  },
+  "javascript_validatorjs::javascript_validatorjs/src/lib/blacklist.js::5::javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp": {
+    "estado": "VULNERABLE",
+    "explicacion": "El código utiliza una expresión regular dinámica basada en la entrada del usuario (`chars`). Esto puede permitir un ataque de Denegación de Servicio mediante Expresiones Regulares (ReDoS), ya que las expresiones regulares pueden volverse muy complejas y consumir muchos recursos si no están bien optimizadas.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.54
+  },
+  "javascript_validatorjs::javascript_validatorjs/src/lib/isAlpha.js::14::javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp": {
+    "estado": "VULNERABLE",
+    "explicacion": "El código utiliza `new RegExp()` con una expresión regular que puede ser controlada por el usuario a través de la variable `ignore`. Esto podría permitir un ataque de Denegación de Servicio basado en Expresiones Regulares (ReDoS). Además, el uso de `replace` con una expresión regular dinámica también podría introducir vulnerabilidades si no se maneja correctamente.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 9.52
+  },
+  "javascript_validatorjs::javascript_validatorjs/src/lib/isAlphanumeric.js::14::javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp": {
+    "estado": "VULNERABLE",
+    "explicacion": "El código utiliza `new RegExp()` con una expresión regular que puede ser controlada por el usuario a través de la variable `ignore`. Esto puede permitir un ataque de Denegación de Servicio basado en Expresiones Regulares (ReDoS). Además, el uso de `replace` con una expresión regular dinámica también podría introducir vulnerabilidades si no se maneja correctamente.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 9.68
+  },
+  "javascript_validatorjs::javascript_validatorjs/src/lib/isCurrency.js::53::javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp": {
+    "estado": "VULNERABLE",
+    "explicacion": "El código utiliza una expresión regular que puede ser susceptible a ataques de denegación de servicio (ReDoS) debido al uso de funciones regulares como 'match'. Además, la expresión regular se construye dinámicamente basándose en la variable 'id', lo que hace que sea controlada parcialmente por el usuario.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.62
+  },
+  "javascript_validatorjs::javascript_validatorjs/src/lib/isDecimal.js::7::javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp": {
+    "estado": "VULNERABLE",
+    "explicacion": "El código utiliza una expresión regular dinámica que puede ser atacada por DoS debido a su complejidad. La expresión regular depende de las opciones proporcionadas, lo que significa que podría ser controlada por el usuario en algún escenario.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.35
+  },
+  "javascript_validatorjs::javascript_validatorjs/src/lib/isEmail.js::166::javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp": {
+    "estado": "VULNERABLE",
+    "explicacion": "El código utiliza un patrón regular dinámico basado en la entrada del usuario (`options.blacklisted_chars`). Esto puede permitir una inyección de expresiones regulares complejas que causen un Despliegue Denegado de Servicio (DoS) mediante una expresión regular maliciosa.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 11.27
+  },
+  "javascript_validatorjs::javascript_validatorjs/src/lib/isFloat.js::8::javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp": {
+    "estado": "VULNERABLE",
+    "explicacion": "El código utiliza un patrón regular dinámico basado en la entrada del usuario (`id`), lo que puede permitir una inyección de expresiones regulares complejas y causar un DoS (Denial of Service). Además, el uso de `new RegExp()` con una opción como argumento puede ser susceptible a ataques de fuerza bruta.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 9.09
+  },
+  "javascript_validatorjs::javascript_validatorjs/src/lib/isHash.js::21::javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp": {
+    "estado": "VULNERABLE",
+    "explicacion": "El código utiliza un constructor RegExp que recibe como argumento una variable 'algorithm' controlada por el usuario. Esto puede permitir un ataque de Denegación de Servicio mediante Expresiones Regulares (ReDoS). La entrada 'algorithm' debe ser validada o limitada para evitar este riesgo.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.21
+  },
+  "javascript_validatorjs::javascript_validatorjs/src/lib/isNumeric.js::11::javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp": {
+    "estado": "SEGURO",
+    "explicacion": "El código utiliza una expresión regular predefinida (`numericNoSymbols`) que no es controlada por el usuario. Además, el uso de `assertString(str)` asegura que la entrada sea una cadena, lo que evita posibles inyecciones de patrones regulares maliciosos.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.78
+  },
+  "javascript_validatorjs::javascript_validatorjs/src/lib/isURL.js::61::problem-based-packs.insecure-transport.js-node.using-http-server.using-http-server": {
+    "estado": "VULNERABLE",
+    "explicacion": "El código utiliza 'http.get' para realizar solicitudes a URLs proporcionadas por el usuario, lo que expone las comunicaciones al riesgo de ataques de tipo man-in-the-middle. No hay evidencia de que esta solicitud esté protegida por HTTPS o que existan medidas adicionales de seguridad.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.88
+  },
+  "javascript_validatorjs::javascript_validatorjs/src/lib/ltrim.js::6::javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp": {
+    "estado": "VULNERABLE",
+    "explicacion": "El código utiliza una expresión regular dinámica basada en la entrada del usuario (`chars`). Esto puede permitir un ataque de Denegación de Servicio mediante Expresiones Regulares (ReDoS), ya que las expresiones regulares bloquean el hilo principal durante su ejecución.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.98
+  },
+  "javascript_validatorjs::javascript_validatorjs/src/lib/matches.js::6::javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp": {
+    "estado": "VULNERABLE",
+    "explicacion": "El código utiliza `new RegExp()` con una expresión regular que puede ser controlada por el usuario a través de la variable `pattern`. Esto puede permitir un ataque de Denegación de Servicio basado en Expresiones Regulares (ReDoS). Además, el uso de modificadores como 'i' puede hacer que las expresiones regulares sean más complejas y propensas a problemas de rendimiento.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 9.52
+  },
+  "javascript_validatorjs::javascript_validatorjs/src/lib/rtrim.js::7::javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp": {
+    "estado": "VULNERABLE",
+    "explicacion": "El código utiliza una expresión regular dinámica basada en la entrada del usuario, lo que puede permitir un ataque de Denegación de Servicio mediante Expresiones Regulares (ReDoS). La entrada 'chars' es controlada por el usuario, lo que hace que este sea un riesgo potencial.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.29
+  },
+  "javascript_validatorjs::javascript_validatorjs/src/lib/util/multilineRegex.js::12::javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp": {
+    "estado": "VULNERABLE",
+    "explicacion": "El código utiliza `new RegExp()` con una expresión regular construida dinámicamente a partir de entradas que pueden ser controladas por el usuario (`parts`). Esto puede permitir ataques de Denegación de Servicio mediante Expresiones Regulares (ReDoS). Además, el uso de funciones como `match()` en los filtros puede llevar a problemas de rendimiento si las expresiones regulares son complejas.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 9.62
+  },
+  "javascript_validatorjs::javascript_validatorjs/src/lib/whitelist.js::5::javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp": {
+    "estado": "VULNERABLE",
+    "explicacion": "El código utiliza una expresión regular dinámica que puede ser atacada por una inyección de expresiones regulares (ReDoS). La entrada 'chars' es controlada por el usuario, lo que hace que este sea un riesgo potencial.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.27
+  },
+  "python_colorama::python_colorama/.github/workflows/lint_python.yml::7::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código no contiene ninguna entrada controlada por el usuario ni realiza operaciones que requieran sanitización. La referencia 'actions/checkout@v4' es una versión específica del acción, lo que evita problemas relacionados con el uso de ramas o etiquetas mutables.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.41
+  },
+  "python_colorama::python_colorama/.github/workflows/lint_python.yml::8::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código no contiene ninguna entrada controlada por el usuario ni utiliza referencias mutables como etiquetas o ramas. La acción 'actions/checkout' se refiere a una versión específica ('v4') en lugar de una referencia mutable, lo que minimiza el riesgo de ataques de cadena de suministro.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.32
+  },
+  "python_colorama::python_colorama/.github/workflows/test.yml::26::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código no contiene ninguna entrada controlada por el usuario ni flujos de datos que puedan ser manipulados. La versión de Python utilizada en cada paso del workflow es definida en una matriz fija y no es susceptible a cambios externos que puedan comprometer la integridad del componente.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.14
+  },
+  "python_colorama::python_colorama/.github/workflows/test.yml::29::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni flujos de datos que puedan ser manipulados. La referencia al componente 'actions/checkout' está fija y no es susceptible a cambios silenciosos debido a la reubicación de etiquetas o ramas. Por lo tanto, no existe una vulnerabilidad real.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.9
+  },
+  "python_colorama::python_colorama/.github/workflows/test.yml::41::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código no contiene ninguna entrada controlada por el usuario ni flujos de datos que no estén sanitizados. La referencia utilizada (`actions/checkout@v4`) es una versión específica y no es susceptible a ser modificada por terceros, lo que minimiza los riesgos asociados a este tipo de vulnerabilidad.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.5
+  },
+  "python_colorama::python_colorama/colorama/ansitowin32.py::282::python.lang.security.audit.subprocess-shell-true.subprocess-shell-true": {
+    "estado": "VULNERABLE",
+    "explicacion": "El uso de `subprocess.run` con `shell=True` permite que el comando sea ejecutado mediante un shell, lo que puede llevar a inyección de comandos si `command_name` es controlado por el usuario. Aunque en este caso específico `command_name` parece ser una cadena fija, el uso de `shell=True` generalmente debe evitarse para evitar riesgos de inyección de comandos.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 9.83
+  },
+  "python_colorama::python_colorama/colorama/winterm.py::202::python.lang.security.audit.subprocess-shell-true.subprocess-shell-true": {
+    "estado": "VULNERABLE",
+    "explicacion": "El uso de `subprocess.run` con `shell=True` permite la inyección de comandos, lo que puede ser explotado si la entrada `target_dir` o `config_name` es controlada por el usuario. No hay evidencia de que estas entradas estén sanitzadas o sean constantes.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.29
+  },
+  "python_flask_httpauth::python_flask_httpauth/docs/_static/index.html::9::html.security.plaintext-http-link.plaintext-http-link": {
+    "estado": "VULNERABLE",
+    "explicacion": "El fragmento de código contiene enlaces que utilizan URLs HTTP en lugar de HTTPS. Esto expone la información sensible a posibles ataques man-in-the-middle.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 5.83
+  },
+  "python_flask_httpauth::python_flask_httpauth/docs/_static/index.html::10::html.security.plaintext-http-link.plaintext-http-link": {
+    "estado": "VULNERABLE",
+    "explicacion": "El fragmento de código contiene enlaces que utilizan URLs HTTP en lugar de HTTPS. Esto expone la información sensible a posibles ataques man-in-the-middle.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 5.84
+  },
+  "python_flask_httpauth::python_flask_httpauth/docs/_themes/flask/layout.html::19::html.security.plaintext-http-link.plaintext-http-link": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna información sensible que necesite ser transmitida de forma segura. La URL mencionada ('http://sphinx.pocoo.org/') es una referencia a un sitio web público y no contiene datos sensibles que requieran cifrado SSL/TLS.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.56
+  },
+  "python_flask_httpauth::python_flask_httpauth/docs/_themes/flask_small/layout.html::17::html.security.plaintext-http-link.plaintext-http-link": {
+    "estado": "SEGURO",
+    "explicacion": "La URL 'http://github.com/{{ theme_github_fork }}' no es controlada por el usuario y parece ser una referencia constante al repositorio de GitHub. No hay evidencia de que esta URL sea transmitida en texto plano, por lo que no se considera una vulnerabilidad.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.64
+  },
+  "python_flask_httpauth::python_flask_httpauth/examples/basic_auth.py::38::python.flask.security.audit.app-run-param-config.avoid_app_run_with_bad_host": {
+    "error": "Error de conexión con el LLM: 500 Server Error: Internal Server Error for url: https://jinx-dwindling-gloss.ngrok-free.dev/chat",
+    "tiempo_segundos": 7.53
+  },
+  "python_flask_httpauth::python_flask_httpauth/examples/basic_auth.py::38::python.flask.security.audit.debug-enabled.debug-enabled": {
+    "error": "Error de conexión con el LLM: 500 Server Error: Internal Server Error for url: https://jinx-dwindling-gloss.ngrok-free.dev/chat",
+    "tiempo_segundos": 7.24
+  },
+  "python_flask_httpauth::python_flask_httpauth/examples/digest_auth.py::36::python.flask.security.audit.app-run-param-config.avoid_app_run_with_bad_host": {
+    "error": "Error de conexión con el LLM: 500 Server Error: Internal Server Error for url: https://jinx-dwindling-gloss.ngrok-free.dev/chat",
+    "tiempo_segundos": 6.96
+  },
+  "python_flask_httpauth::python_flask_httpauth/examples/digest_auth.py::36::python.flask.security.audit.debug-enabled.debug-enabled": {
+    "error": "Error de conexión con el LLM: 500 Server Error: Internal Server Error for url: https://jinx-dwindling-gloss.ngrok-free.dev/chat",
+    "tiempo_segundos": 6.71
+  },
+  "python_flask_httpauth::python_flask_httpauth/examples/multi_auth.py::20::python.flask.security.audit.hardcoded-config.avoid_hardcoded_config_SECRET_KEY": {
+    "estado": "VULNERABLE",
+    "explicacion": "La variable SECRET_KEY está codificada directamente en el código fuente, lo que expone la clave secreta a riesgo de ser descubierta. Esta es una vulnerabilidad real ya que permite a atacantes potencialmente comprometer la autenticidad y la integridad de las solicitudes al servidor.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.93
+  },
+  "python_flask_httpauth::python_flask_httpauth/examples/roles_auth.py::54::python.flask.security.audit.app-run-param-config.avoid_app_run_with_bad_host": {
+    "estado": "VULNERABLE",
+    "explicacion": "El servidor Flask se ejecuta con 'host=0.0.0.0', lo que expone el servidor públicamente a todas las interfaces de red. Esto puede permitir a atacantes acceder al servidor y potencialmente comprometer la aplicación.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.16
+  },
+  "python_flask_httpauth::python_flask_httpauth/examples/roles_auth.py::54::python.flask.security.audit.debug-enabled.debug-enabled": {
+    "estado": "VULNERABLE",
+    "explicacion": "El código establece la aplicación Flask en modo de depuración (`debug=True`), lo cual expone información sensible durante el desarrollo. Aunque no hay evidencia directa de inyección SQL o XSS en este fragmento específico, el uso de `debug=True` en producción puede revelar detalles internos de la aplicación que podrían ser utilizados por atacantes para explotar vulnerabilidades.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 9.33
+  },
+  "python_flask_httpauth::python_flask_httpauth/examples/token_auth.py::26::python.flask.security.audit.hardcoded-config.avoid_hardcoded_config_SECRET_KEY": {
+    "estado": "VULNERABLE",
+    "explicacion": "La variable SECRET_KEY está codificada directamente en el código fuente, lo que expone la clave secreta a riesgo de ser descubierta. Esta es una vulnerabilidad real ya que permite a cualquier atacante autenticarse como cualquier usuario sin necesidad de proporcionar credenciales válidas.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.96
+  },
+  "python_flask_httpauth::python_flask_httpauth/src/flask_httpauth.py::20::python.flask.security.audit.hardcoded-config.avoid_hardcoded_config_DEBUG": {
+    "estado": "SEGURO",
+    "explicacion": "La variable 'DEBUG' está configurada como verdadera dentro de un método que no recibe ninguna entrada del usuario. La configuración de 'DEBUG' a verdadero puede tener implicaciones de seguridad, pero en este caso no parece ser controlado directamente por el usuario. Además, el valor de 'DEFAULT_MASTER_KEY' es constante y no es proporcionado por el usuario.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.7
+  },
+  "python_flask_httpauth::python_flask_httpauth/src/flask_httpauth.py::104::python.flask.security.audit.xss.make-response-with-unknown-content.make-response-with-unknown-content": {
+    "estado": "SEGURO",
+    "explicacion": "El código utiliza `make_response()` para crear una respuesta HTTP, pero no parece que la salida sea renderizada en una página web. En su lugar, parece ser una respuesta de autenticación que solo contiene texto plano sin HTML. Por lo tanto, no existe un riesgo de XSS.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.61
+  },
+  "python_pyjwt::python_pyjwt/.github/dependabot.yml::3::package_managers.dependabot.dependabot-missing-cooldown.dependabot-missing-cooldown": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni flujos de datos que puedan ser inseguros. La configuración de Dependabot no incluye información que pueda ser manipulada por un atacante, por lo tanto, no representa una vulnerabilidad real.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.74
+  },
+  "python_pyjwt::python_pyjwt/.github/workflows/main.yml::37::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "La entrada 'matrix.python-version' no es controlada por el usuario y está definida dentro del workflow de GitHub Actions, lo que minimiza el riesgo de una inyección o manipulación. Además, el uso de una versión específica de Python (en lugar de una rama o etiqueta) reduce significativamente el riesgo de compromiso.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 15.46
+  },
+  "python_pyjwt::python_pyjwt/.github/workflows/main.yml::38::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "La entrada 'matrix.python-version' no es controlada por el usuario y está definida dentro de una matriz de pruebas, lo que significa que sus valores son conocidos y constantes durante la ejecución del workflow. Además, el uso de una versión específica de Python (en lugar de una rama o etiqueta) minimiza el riesgo de ataques relacionados con el cambio de referencia.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 9.11
+  },
+  "python_pyjwt::python_pyjwt/.github/workflows/main.yml::56::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni flujos de datos que no estén sanitizados. La acción 'actions/setup-python' utiliza una versión específica de Python definida en el archivo de configuración, lo que evita cualquier riesgo asociado con referencias mutables a etiquetas o ramas. Además, las acciones de GitHub son ejecutadas en entornos controlados y seguros, reduciendo significativamente el riesgo de ataques de cadena de suministro.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 11.06
+  },
+  "python_pyjwt::python_pyjwt/.github/workflows/main.yml::70::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni flujos de datos que no estén sanitizados. La acción se ejecuta en un entorno controlado dentro de un workflow de GitHub Actions, lo que minimiza los riesgos asociados con la manipulación de referencias de etiquetas o ramas. Además, no hay evidencia de que la entrada sea susceptible a ataques de tipo supply-chain.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 9.93
+  },
+  "python_pyjwt::python_pyjwt/.github/workflows/main.yml::81::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni utiliza una etiqueta o rama mutable. La acción 'actions/checkout' se refiere a una versión específica ('v7') en lugar de una etiqueta o rama, lo que minimiza el riesgo de ataques de reubicación de componentes en la cadena de suministro.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.8
+  },
+  "python_pyjwt::python_pyjwt/.github/workflows/main.yml::82::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni realiza operaciones que requieran sanitización. La referencia 'actions/checkout@v7' es una versión específica del acción, lo que evita problemas relacionados con referencias mutables como tags o ramas. Por lo tanto, no existe una vulnerabilidad real.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.34
+  },
+  "python_pyjwt::python_pyjwt/.github/workflows/main.yml::109::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El uso de 'actions/checkout@v7' no es vulnerable porque la versión específica 'v7' es una referencia fija y no controlada por el usuario. Además, no hay evidencia de que esta acción esté relacionada con ninguna vulnerabilidad conocida.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.32
+  },
+  "python_pyjwt::python_pyjwt/.github/workflows/main.yml::110::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "La referencia al paso 'actions/checkout' utiliza una versión específica ('v7') en lugar de una etiqueta o rama mutable, lo que minimiza el riesgo de ataques de reubicación de componentes en la cadena de suministro.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.16
+  },
+  "python_pyjwt::python_pyjwt/.github/workflows/pypi-package.yml::27::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni realiza operaciones que requieran sanitización. La referencia 'actions/checkout@v7' es una versión específica del acción, lo que evita problemas relacionados con referencias mutables como tags o ramas. Por lo tanto, no existe una vulnerabilidad real.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.34
+  },
+  "python_pyjwt::python_pyjwt/.github/workflows/pypi-package.yml::31::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni flujos de datos que puedan ser manipulados. La referencia al paso 'actions/checkout@v7' es una versión específica y no está basada en una etiqueta o rama mutable. Por lo tanto, no existe una vulnerabilidad real.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.36
+  },
+  "python_pyjwt::python_pyjwt/.github/workflows/pypi-package.yml::43::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni realiza operaciones que requieran sanitización. La referencia utilizada (`actions/download-artifact@v8`) es una versión específica y no es susceptible a ser modificada por terceros, lo que minimiza el riesgo de ataques de tipo supply-chain.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.18
+  },
+  "python_pyjwt::python_pyjwt/.github/workflows/pypi-package.yml::49::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni flujos de datos que puedan ser manipulados. Las acciones de GitHub son ejecutadas en un entorno controlado y las referencias a componentes son específicas y constantes.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.48
+  },
+  "python_pyjwt::python_pyjwt/.github/workflows/pypi-package.yml::63::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni realiza operaciones que requieran sanitización. La referencia utilizada (`actions/download-artifact@v8`) es una versión específica y no es susceptible a ser modificada por terceros, lo que minimiza el riesgo de ataques de tipo supply-chain.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.39
+  },
+  "python_pyjwt::python_pyjwt/.github/workflows/pypi-package.yml::69::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni realiza operaciones que requieran sanitización. Las acciones de descarga y publicación de paquetes son procesos automatizados y no están sujetos a manipulación por parte del usuario final.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.48
+  },
+  "python_pyjwt::python_pyjwt/.github/workflows/stale.yml::15::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni flujos de datos que puedan ser manipulados. La acción 'actions/stale' no recibe entradas directamente del usuario y su configuración es estática. Por lo tanto, no existe una vulnerabilidad real.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.98
+  },
+  "python_pyjwt::python_pyjwt/CHANGELOG.rst::626::generic.secrets.security.detected-jwt-token.detected-jwt-token": {
+    "estado": "SEGURO",
+    "explicacion": "El token JWT y las demás variables son constantes y no están controladas por el usuario. La entrada es segura en este contexto.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 6.22
+  },
+  "python_pyjwt::python_pyjwt/README.rst::46::generic.secrets.security.detected-jwt-token.detected-jwt-token": {
+    "estado": "SEGURO",
+    "explicacion": "El secreto utilizado para codificar y decodificar el JWT es una cadena constante ('secret'), lo que significa que no es controlado por el usuario y no hay riesgo de inyección de información sensible.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 6.65
+  },
+  "python_pyjwt::python_pyjwt/docs/algorithms.rst::79::generic.secrets.security.detected-jwt-token.detected-jwt-token": {
+    "estado": "SEGURO",
+    "explicacion": "El valor de la clave 'secret' es una cadena fija y no es controlada por el usuario. Por lo tanto, no existe un riesgo de inyección de código ni de uso de una clave criptográfica insegura.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.12
+  },
+  "python_pyjwt::python_pyjwt/docs/usage.rst::102::generic.secrets.security.detected-jwt-token.detected-jwt-token": {
+    "estado": "SEGURO",
+    "explicacion": "El secreto utilizado en la generación del JWT es una cadena constante ('secret'), lo que significa que no es controlado por el usuario y no hay riesgo de inyección de información sensible.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 6.41
+  },
+  "python_pyjwt::python_pyjwt/docs/usage.rst::115::generic.secrets.security.detected-jwt-token.detected-jwt-token": {
+    "estado": "SEGURO",
+    "explicacion": "El secreto utilizado para codificar el JWT es una cadena constante ('secret'), lo que significa que no es controlado por el usuario y no hay riesgo de inyección de información sensible.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 6.23
+  },
+  "python_pyjwt::python_pyjwt/docs/usage.rst::499::generic.secrets.security.detected-jwt-token.detected-jwt-token": {
+    "estado": "SEGURO",
+    "explicacion": "El token JWT y la URL son constantes y no están controlados por el usuario. La entrada es segura en este contexto.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 6.14
+  },
+  "python_pyjwt::python_pyjwt/jwt/api_jwt.py::46::python.lang.security.deserialization.pickle.avoid-pickle": {
+    "estado": "VULNERABLE",
+    "explicacion": "El método `decode_custom_payload` utiliza `pickle.loads` para deserializar datos recibidos como parámetro `raw_bytes`. Esto puede permitir la ejecución arbitraria de código si los datos son manipulados por un atacante, lo que constituye una vulnerabilidad segura conocida como CWE-502: Deserialization of Untrusted Data.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.7
+  },
+  "python_pyjwt::python_pyjwt/jwt/jwks_client.py::38::python.lang.security.audit.dynamic-urllib-use-detected.dynamic-urllib-use-detected": {
+    "estado": "VULNERABLE",
+    "explicacion": "El método `fetch_untrusted_jwk_endpoint` acepta una entrada `custom_url` que es utilizada directamente en una llamada a `urllib.request.urlopen`. Esta entrada es controlada por el usuario, lo que permite a un atacante controlar la URL y potencialmente leer archivos arbitrarios en el sistema del servidor.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.17
+  },
+  "python_pyjwt::python_pyjwt/jwt/utils.py::153::python.lang.security.audit.subprocess-shell-true.subprocess-shell-true": {
+    "estado": "VULNERABLE",
+    "explicacion": "El uso de 'subprocess.run' con 'shell=True' permite la inyección de comandos, lo que puede ser explotado si la entrada 'key_identifier' es controlada por el usuario. La entrada 'backup_target' también podría ser manipulada, aumentando así el riesgo de inyección de comandos.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.62
+  },
+  "python_validators::python_validators/.github/workflows/pycqa.yaml::17::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni realiza operaciones que requieran sanitización. La referencia al componente 'actions/checkout' está fija y no es susceptible a ser modificada por el usuario. Por lo tanto, no existe una vulnerabilidad real.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.78
+  },
+  "python_validators::python_validators/.github/workflows/pycqa.yaml::20::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni flujos de datos que puedan ser manipulados. La acción 'actions/checkout@v6' no utiliza entradas variables y siempre apunta a una versión específica del repositorio. Por lo tanto, no existe una vulnerabilidad real.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.39
+  },
+  "python_validators::python_validators/.github/workflows/pycqa.yaml::42::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El valor de 'matrix.os' y 'matrix.python-version' es definido dentro de una matriz de trabajo en GitHub Actions y no es controlado directamente por el usuario. Además, el uso de referencias específicas como 'actions/checkout@v4' y 'actions/setup-python@v5' es seguro porque estas son referencias a versiones específicas que no cambian silenciosamente.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 9.32
+  },
+  "python_validators::python_validators/.github/workflows/pycqa.yaml::45::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni flujos de datos que puedan ser manipulados. La referencia al repositorio se establece mediante variables de entorno definidas en el workflow, lo que evita cualquier riesgo asociado con referencias mutables a tags o ramas.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.29
+  },
+  "python_validators::python_validators/.github/workflows/sast.yaml::18::yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": {
+    "estado": "SEGURO",
+    "explicacion": "El fragmento de código proporcionado no contiene ninguna entrada controlada por el usuario ni realiza operaciones que requieran sanitización. La acción 'PyCQA/bandit-action' no utiliza entradas variables y su uso es seguro dentro del contexto proporcionado.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 7.06
+  },
+  "python_validators::python_validators/src/validators/between.py::18::python.sqlalchemy.security.sqlalchemy-execute-raw-query.sqlalchemy-execute-raw-query": {
+    "estado": "VULNERABLE",
+    "explicacion": "El código concatena directamente la entrada del usuario (`value`) dentro de una consulta SQL sin usar parámetros preparados, lo que puede llevar a una inyección SQL.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 6.18
+  },
+  "python_validators::python_validators/src/validators/utils.py::108::python.lang.security.deserialization.pickle.avoid-pickle": {
+    "estado": "VULNERABLE",
+    "explicacion": "El código utiliza `pickle.loads` para deserializar datos que provienen de `profile_data`. Como esta entrada puede ser controlada por el usuario, esto representa una vulnerabilidad potencial a CWE-502 (Deserialization of Untrusted Data), ya que podría permitir la ejecución arbitraria de código.",
+    "codigo_parchado": "",
+    "owasp_id": "N/A",
+    "owasp_categoria": "N/A",
+    "cvss_score": 0.0,
+    "cvss_vector": "N/A",
+    "tiempo_segundos": 8.04
+  }
+}

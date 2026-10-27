@@ -47,19 +47,22 @@ SeguridadIA/
 │   ├── semgrep_scanner.py          # Paso 1: Conector con Semgrep (SAST permisivo)
 │   ├── taint_tracker.py            # Paso 2: Rastreador de flujos inter-archivo y Call-Sites
 │   ├── trivy_scanner.py            # Paso 1: Conector con Trivy (SCA de dependencias)
-│   ├── llm_client.py               # Paso 3: Cliente LLM, validación Pydantic y APR
-│   └── evaluator.py                # Paso 4: Matriz de confusión frente a Ground Truth
+│   ├── llm_client.py               # Paso 3: Cliente LLM, validación Pydantic y triage
+│   ├── ast_extractor.py            # Estudio de Ablación: Extractor modular AST de funciones
+│   ├── evaluator.py                # Paso 4: Matriz de confusión frente a Ground Truth
+│   └── reporter.py                 # Paso 5: Generador de Dashboard HTML y reportes comparativos
 ├── dataset_repos/                  # Banco de pruebas (15 repositorios de código abierto)
 │   ├── ground_truth.json           # Verdad de campo (40 debilidades controladas)
 │   ├── metadata.json               # Metadatos descriptivos de los repositorios
 │   ├── TESTBED_GUIDE.md            # Guía del banco de pruebas y taxonomía OWASP/CWE
 │   └── [15 carpetas de repos]      # Python, JS, C, C++, Go, Java
+├── run_benchmark.py                # Runner comparativo (soporta --mode hybrid y --mode pure-llm)
 └── COMANDOS.md                     # Manual detallado de comandos y ejemplos
 ```
 
 ---
 
-## 🚀 Guía Rápida de Comandos (`main.py`)
+## 🚀 Guía Rápida de Comandos (`main.py` y `run_benchmark.py`)
 
 *(Consulta [**COMANDOS.md**](file:///c:/Users/Franco%20Sosa/Documents/SeguridadIA/COMANDOS.md) para ver ejemplos detallados y opciones avanzadas).*
 
@@ -87,7 +90,7 @@ python main.py trace dataset_repos/python_pyjwt
 python main.py scan-deps dataset_repos/python_flask_httpauth
 ```
 
-### 5. Auditoría Completa Asistida por IA (Triage + Parches APR)
+### 5. Auditoría Completa Asistida por IA (Triage Semántico)
 ```bash
 python main.py audit dataset_repos/python_colorama
 ```
@@ -96,3 +99,21 @@ python main.py audit dataset_repos/python_colorama
 ```bash
 python main.py evaluate --repo python_colorama
 ```
+
+### 7. Benchmark Masivo y Dashboard Visual (Reporte Interactivo)
+```bash
+# Ejecutar sobre todo dataset_repos y abrir el Dashboard en el navegador
+python main.py benchmark --open
+
+# Ver reporte visual inmediatamente usando datos cacheados
+python main.py benchmark --report-only --open
+```
+
+### 8. Estudio de Ablación: Modo Pure-LLM (Sin Semgrep)
+```bash
+# Ejecutar estudio de ablación con troceado AST y auditoría directa de Taint
+python run_benchmark.py --mode pure-llm --repos dataset_repos/ --ground-truth dataset_repos/ground_truth.json --open
+
+# O mediante el CLI unificado
+python main.py pure-llm --open
+```

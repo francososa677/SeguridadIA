@@ -52,6 +52,11 @@ from sast.llm_client import (
     obtener_ngrok_url
 )
 from sast.evaluator import evaluar_hallazgos_ground_truth, generar_reporte_metricas
+from sast.reporter import (
+    compilar_matriz_comparativa,
+    generar_reporte_html,
+    generar_reporte_markdown
+)
 
 # -----------------------------------------------------------------------------
 # Rutas y constantes globales del proyecto
@@ -265,17 +270,19 @@ def cmd_audit(args: argparse.Namespace) -> None:
         dur = round(time.time() - start, 2)
 
         estado = veredicto.get("estado", "ERROR")
-        owasp = veredicto.get("owasp_categoria", "Desconocido")
-        cvss = veredicto.get("cvss_score", 0.0)
+        cwe = h.get("cwe", "Desconocido")
+        owasp = h.get("owasp", "Desconocido")
 
-        print(f"Veredicto IA : {estado} | OWASP: {owasp} | CVSS: {cvss} ({dur}s)")
-        print(f"Explicación  : {veredicto.get('explicacion', '')[:140]}...")
+        print(f"Veredicto IA : {estado} ({dur}s)")
+        print(f"Taxonomía    : CWE: {cwe} | OWASP: {owasp}")
+        print(f"Explicación  : {veredicto.get('explicacion', '')[:140]}")
 
         if veredicto.get("codigo_parchado") and estado == "VULNERABLE":
             print("\nParche Sugerido (APR):")
             print("```")
             print(veredicto.get("codigo_parchado")[:300] + "...")
             print("```")
+
 
         auditorias_completadas.append({
             "semgrep": h,
@@ -331,8 +338,9 @@ def cmd_evaluate(args: argparse.Namespace) -> None:
         dur = round(time.time() - start, 2)
 
         estado = pred.get("estado", "ERROR")
-        owasp = pred.get("owasp_categoria", "Desconocido")
-        print(f"{estado} | {owasp} ({dur}s)")
+        owasp = h.get("owasp", "Desconocido")
+        cwe = h.get("cwe", "Desconocido")
+        print(f"{estado} ({dur}s)")
 
         resultados.append({
             "repo": h["repo"],
@@ -341,15 +349,15 @@ def cmd_evaluate(args: argparse.Namespace) -> None:
             "flujo_inter_archivo": flujo,
             "estado": estado,
             "owasp_categoria": owasp,
-            "owasp_id": pred.get("owasp_id"),
-            "cvss_score": pred.get("cvss_score"),
-            "explicacion": pred.get("explicacion"),
+            "cwe": cwe,
+            "explicacion": pred.get("explicacion", ""),
             "tiempo_segundos": dur
         })
         time.sleep(0.2)
 
+
     print("\n[*] Contrastando resultados contra ground_truth.json...")
-    eval_res = evaluar_hallazgos_ground_truth(resultados, GROUND_TRUTH_PATH)
+    eval_res = evaluar_hallazgos_ground_truth(resultados, GROUND_TRUTH_PATH, repo_filter=args.repo)
     informe = generar_reporte_metricas(eval_res)
     print("\n" + informe)
 
@@ -361,6 +369,159 @@ def cmd_evaluate(args: argparse.Namespace) -> None:
                 "evaluacion": eval_res
             }, f, indent=2, ensure_ascii=False)
         print(f"\n[+] Reporte de evaluación guardado en: {out_file}")
+
+
+# =============================================================================
+# COMANDO: benchmark (Evaluación Integral y Dashboard Comparativo Visual)
+# =============================================================================
+def cmd_benchmark(args: argparse.Namespace) -> None:
+    """
+    Ejecuta el benchmark unificado sobre todo dataset_repos (o repositorio específico),
+    contrastando Semgrep (SAST), Trivy (SCA) y el Agente IA frente a las 40 vulnerabilidades del Ground Truth,
+    midiendo la reducción de falsos positivos y generando reportes visuales en HTML y Markdown.
+    """
+    if not os.path.exists(GROUND_TRUTH_PATH):
+        print(f"❌ Error: No se encontró ground_truth.json en: {GROUND_TRUTH_PATH}")
+        sys.exit(1)
+
+    with open(GROUND_TRUTH_PATH, "r", encoding="utf-8") as f:
+        gt_list = json.load(f)
+
+    if args.repo:
+        gt_list = [gt for gt in gt_list if gt.get("repo") == args.repo]
+        print(f"[*] Filtrando benchmark para el repositorio: '{args.repo}' ({len(gt_list)} debilidades en Ground Truth)")
+
+    print(f"==================================================================")
+    print(f"   📊 BENCHMARK COMPARATIVO MULTICAPA (SAST + SCA + AGENTE IA)   ")
+    print(f"==================================================================")
+    target_scan = os.path.join(DATASET_REPOS_DIR, args.repo) if args.repo else DATASET_REPOS_DIR
+    print(f"Objetivo: {target_scan}\n")
+
+    # 1. Escaneo de código con Semgrep
+    print(f"[*] Paso 1: Escaneando código fuente con Semgrep (SAST)...")
+    hallazgos_semgrep = scan_con_semgrep(target_scan)
+    if args.repo:
+        hallazgos_semgrep = [h for h in hallazgos_semgrep if h.get("repo") == args.repo]
+    print(f"    -> {len(hallazgos_semgrep)} alertas potenciales detectadas por Semgrep.")
+
+    # 2. Enriquecimiento con flujo inter-archivo
+    print(f"[*] Paso 2: Rastreando flujos inter-archivo con Taint Tracker...")
+    hallazgos_semgrep = enriquecer_hallazgos_con_flujo(hallazgos_semgrep, target_scan)
+    inter_count = sum(1 for h in hallazgos_semgrep if h.get("flujo_inter_archivo", {}).get("tipo_flujo") == "INTER_FILE_FLOW")
+    print(f"    -> {inter_count} flujos inter-archivo detectados entre módulos.")
+
+    # 3. Escaneo de dependencias con Trivy
+    print(f"[*] Paso 3: Escaneando dependencias con Trivy (SCA)...")
+    hallazgos_trivy = scan_con_trivy(target_scan)
+    if args.repo:
+        hallazgos_trivy = [t for t in hallazgos_trivy if t.get("repo") == args.repo]
+    print(f"    -> {len(hallazgos_trivy)} vulnerabilidades de librerías detectadas por Trivy.\n")
+
+    # 4. Manejo de caché incremental de inferencias
+    cache_path = os.path.abspath(args.cache) if args.cache else os.path.join(BASE_DIR, "benchmark_cache.json")
+    cache: dict = {}
+    if os.path.exists(cache_path):
+        try:
+            with open(cache_path, "r", encoding="utf-8") as f:
+                cache = json.load(f)
+            print(f"[*] Caché cargado: {len(cache)} inferencias previas disponibles.")
+        except Exception as e:
+            print(f"[-] Advertencia al leer caché ({e}), se iniciará nuevo.")
+
+    # 5. Inferencia con Agente LLM
+    print(f"[*] Paso 4: Triage semántico con el Agente IA...")
+    hallazgos_auditados = []
+    pendientes_count = 0
+
+    for idx, h in enumerate(hallazgos_semgrep, start=1):
+        flujo = h.get("flujo_inter_archivo", {})
+        ruta = flujo.get("ruta_flujo", f"{h['archivo']}:{h['linea']}")
+        cache_key = f"{h['repo']}::{h['archivo']}::{h['linea']}::{h.get('regla_id', '')}"
+
+        if cache_key in cache:
+            veredicto = cache[cache_key]
+            h["estado"] = veredicto.get("estado", "SEGURO")
+            h["explicacion"] = veredicto.get("explicacion", "")
+            h["tiempo_segundos"] = veredicto.get("tiempo_segundos", 0.0)
+            hallazgos_auditados.append(h)
+        else:
+            if getattr(args, "report_only", False):
+                h["estado"] = "NO_EVALUADO"
+                h["explicacion"] = "Pendiente de auditoría por LLM"
+                hallazgos_auditados.append(h)
+                continue
+
+            if args.limit and pendientes_count >= args.limit:
+                h["estado"] = "NO_EVALUADO"
+                h["explicacion"] = "Omitido por límite de ejecución"
+                hallazgos_auditados.append(h)
+                continue
+
+            pendientes_count += 1
+            print(f"[{idx}/{len(hallazgos_semgrep)}] Auditando con IA: {h['repo']} -> {ruta} ...", end=" ", flush=True)
+            start = time.time()
+            veredicto = auditar_hallazgo_semgrep(h)
+            dur = round(time.time() - start, 2)
+            estado = veredicto.get("estado", "ERROR")
+            print(f"{estado} ({dur}s)")
+
+            veredicto["tiempo_segundos"] = dur
+            cache[cache_key] = veredicto
+            h["estado"] = estado
+            h["explicacion"] = veredicto.get("explicacion", "")
+            h["tiempo_segundos"] = dur
+            hallazgos_auditados.append(h)
+
+            try:
+                with open(cache_path, "w", encoding="utf-8") as cf:
+                    json.dump(cache, cf, indent=2, ensure_ascii=False)
+            except Exception:
+                pass
+
+            time.sleep(0.2)
+
+    # 6. Compilar matriz comparativa
+    print(f"\n[*] Paso 5: Compilando matriz cruzada y métricas de rendimiento...")
+    matriz_datos = compilar_matriz_comparativa(
+        ground_truth_list=gt_list,
+        hallazgos_semgrep_auditados=hallazgos_auditados,
+        hallazgos_trivy=hallazgos_trivy
+    )
+
+    # 7. Generar reporte HTML interactivo
+    html_out = os.path.abspath(args.html) if getattr(args, "html", None) else os.path.join(BASE_DIR, "reporte_benchmark.html")
+    generar_reporte_html(matriz_datos, html_out)
+    print(f"✅ Dashboard interactivo generado en: {html_out}")
+
+    # 8. Generar reporte Markdown
+    md_out = os.path.abspath(args.md) if getattr(args, "md", None) else os.path.join(BASE_DIR, "reporte_benchmark.md")
+    generar_reporte_markdown(matriz_datos, md_out)
+    print(f"✅ Informe Markdown generado en: {md_out}")
+
+    # 9. Mostrar resumen ejecutivo en consola
+    m = matriz_datos["metricas"]
+    print("\n" + "=" * 66)
+    print("   📊 RESUMEN EJECUTIVO DEL BENCHMARK COMPARATIVO")
+    print("=" * 66)
+    print(f"• Total debilidades reales en Ground Truth : {m['total_ground_truth']}")
+    print(f"• Detectadas por Semgrep (Recall Semgrep)  : {m['semgrep_detectados']} / {m['total_ground_truth']} ({m['semgrep_recall']}%)")
+    print(f"• Falsos Positivos de Semgrep (Ruido)     : {m['semgrep_total_ruido']} alertas irrelevantes")
+    print(f"• Verdaderos Positivos confirmados por IA : {m['agente_tp']} (TP)")
+    print(f"• Ruido eliminado exitosamente por la IA  : {m['agente_tn']} / {m['semgrep_total_ruido']} ({m['reduccion_ruido_pct']}% reducción)")
+    print("-" * 66)
+    print(f"🎯 Precisión del Agente (Precision)       : {m['precision']}%")
+    print(f"🔍 Sensibilidad Global (Recall)           : {m['recall']}%")
+    print(f"⭐ F1-Score                               : {m['f1_score']}%")
+    print("=" * 66)
+
+    # 10. Abrir en navegador si se solicitó
+    if getattr(args, "open", False):
+        try:
+            import webbrowser
+            webbrowser.open(f"file:///{html_out}")
+            print(f"[+] Abriendo dashboard en el navegador...")
+        except Exception:
+            pass
 
 
 # =============================================================================
@@ -408,11 +569,33 @@ def main() -> None:
     p_ev.add_argument("--limit", type=int, default=None, help="Límite de casos a evaluar")
     p_ev.add_argument("--out", type=str, default=None, help="Ruta de archivo JSON de salida")
 
+    # 7. benchmark (Evaluación Completa de Todo el Dataset + Reportes Visuales)
+    p_bm = subparsers.add_parser("benchmark", help="Benchmark completo sobre dataset_repos con Dashboard HTML y Markdown")
+    p_bm.add_argument("--repo", type=str, default=None, help="Filtrar por repositorio específico (opcional)")
+    p_bm.add_argument("--limit", type=int, default=None, help="Límite de llamadas nuevas al LLM")
+    p_bm.add_argument("--cache", type=str, default=None, help="Ruta del archivo de caché de inferencias (default: benchmark_cache.json)")
+    p_bm.add_argument("--html", type=str, default=None, help="Ruta del reporte visual HTML (default: reporte_benchmark.html)")
+    p_bm.add_argument("--md", type=str, default=None, help="Ruta del informe Markdown (default: reporte_benchmark.md)")
+    p_bm.add_argument("--report-only", action="store_true", help="Generar reportes a partir de datos ya en caché sin invocar el LLM")
+    # 8. pure-llm (Estudio de Ablación: Extracción AST + LLM puro sin Semgrep)
+    p_pllm = subparsers.add_parser("pure-llm", help="Estudio de Ablación: Extracción AST y auditoría con LLM puro sin Semgrep")
+    p_pllm.add_argument("--repos", type=str, default=DATASET_REPOS_DIR, help="Ruta de repositorios (default: dataset_repos/)")
+    p_pllm.add_argument("--ground-truth", type=str, default=GROUND_TRUTH_PATH, help="Ruta ground_truth.json")
+    p_pllm.add_argument("--repo", type=str, default=None, help="Filtrar por repositorio específico")
+    p_pllm.add_argument("--limit", type=int, default=None, help="Límite de funciones a auditar")
+    p_pllm.add_argument("--cache", type=str, default=None, help="Ruta del archivo de caché de inferencias")
+    p_pllm.add_argument("--html", type=str, default=None, help="Ruta de salida del reporte visual HTML")
+    p_pllm.add_argument("--md", type=str, default=None, help="Ruta de salida del informe Markdown")
+    p_pllm.add_argument("--report-only", action="store_true", help="Generar reportes a partir de datos en caché")
+    p_pllm.add_argument("--open", action="store_true", help="Abrir automáticamente el reporte HTML")
+
     args = parser.parse_args()
 
     if not args.command:
         parser.print_help()
         sys.exit(0)
+
+    from run_benchmark import ejecutar_modo_pure_llm
 
     handlers = {
         "ping": cmd_ping,
@@ -420,7 +603,9 @@ def main() -> None:
         "trace": cmd_trace,
         "scan-deps": cmd_scan_deps,
         "audit": cmd_audit,
-        "evaluate": cmd_evaluate
+        "evaluate": cmd_evaluate,
+        "benchmark": cmd_benchmark,
+        "pure-llm": ejecutar_modo_pure_llm
     }
 
     handlers[args.command](args)

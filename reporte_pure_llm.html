@@ -1,0 +1,2453 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Comparativo SAST: Semgrep + Trivy + Agente IA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #090d16;
+      --bg-secondary: #0f172a;
+      --bg-card: #141e33;
+      --bg-card-hover: #1a2744;
+      --border-color: #223254;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent-cyan: #06b6d4;
+      --accent-blue: #3b82f6;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-red: #ef4444;
+      --accent-purple: #8b5cf6;
+      --radius: 12px;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      line-height: 1.5;
+      padding: 24px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1500px;
+      margin: 0 auto;
+    }
+
+    /* HEADER */
+    header {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.9) 100%);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 32px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: "";
+      position: absolute;
+      top: -50px;
+      right: -50px;
+      width: 250px;
+      height: 250px;
+      background: radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .badge-header {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(6, 182, 212, 0.15);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(to right, #f8fafc, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      max-width: 900px;
+    }
+
+    /* KPI CARDS */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+      position: relative;
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent-cyan);
+      box-shadow: 0 12px 24px -10px rgba(6, 182, 212, 0.25);
+    }
+
+    .kpi-card .kpi-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .kpi-card .kpi-value {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #fff;
+    }
+
+    .kpi-card .kpi-detail {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    .kpi-green { border-left: 4px solid var(--accent-green); }
+    .kpi-blue { border-left: 4px solid var(--accent-blue); }
+    .kpi-cyan { border-left: 4px solid var(--accent-cyan); }
+    .kpi-amber { border-left: 4px solid var(--accent-amber); }
+    .kpi-purple { border-left: 4px solid var(--accent-purple); }
+
+    /* CONTROLS (TABS, SEARCH, FILTERS) */
+    .controls-panel {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .tab-group {
+      display: flex;
+      background: var(--bg-primary);
+      padding: 4px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--bg-card);
+      color: #fff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-color);
+    }
+
+    .search-group {
+      display: flex;
+      gap: 12px;
+      flex: 1;
+      max-width: 500px;
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 8px 14px;
+      color: #fff;
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent-cyan);
+    }
+
+    /* TABLES */
+    .table-container {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      overflow-x: auto;
+      box-shadow: var(--shadow);
+      margin-bottom: 30px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.85rem;
+    }
+
+    th {
+      background: #0b1120;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      letter-spacing: 0.05em;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-color);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(34, 50, 84, 0.6);
+      vertical-align: top;
+    }
+
+    tr:hover td {
+      background: rgba(20, 30, 51, 0.7);
+    }
+
+    .code-font {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+    }
+
+    /* PILLS / STATUS BADGES */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .badge-tp { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-tn { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+    .badge-fp { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .badge-fn { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .badge-na { background: rgba(148, 163, 184, 0.1); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.2); }
+    .badge-inter { background: rgba(139, 92, 246, 0.15); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.3); }
+
+    .explanation-box {
+      background: var(--bg-primary);
+      border-radius: 6px;
+      padding: 8px 10px;
+      margin-top: 6px;
+      color: #cbd5e1;
+      font-size: 0.8rem;
+      border-left: 3px solid var(--accent-cyan);
+    }
+
+    /* DRAWER / CODE ACCORDION */
+    details {
+      margin-top: 6px;
+    }
+
+    summary {
+      color: var(--accent-cyan);
+      cursor: pointer;
+      font-size: 0.75rem;
+      user-select: none;
+    }
+
+    summary:hover {
+      text-decoration: underline;
+    }
+
+    pre.snippet-code {
+      background: #020617;
+      border: 1px solid #1e293b;
+      border-radius: 6px;
+      padding: 10px;
+      margin-top: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.74rem;
+      color: #e2e8f0;
+      overflow-x: auto;
+      max-height: 180px;
+    }
+
+    /* COMPARISON SECTION */
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .comparison-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+
+    .comparison-box h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(34, 50, 84, 0.5);
+      font-size: 0.88rem;
+    }
+
+    .metric-row:last-child {
+      border-bottom: none;
+    }
+
+    .metric-name {
+      color: var(--text-muted);
+    }
+
+    .metric-val {
+      font-weight: 700;
+      color: #fff;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      padding: 20px;
+      margin-top: 30px;
+      border-top: 1px solid var(--border-color);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="badge-header">🔬 Pipeline SAST Híbrido Multicapa</div>
+      <h1>Dashboard de Seguridad y Evaluación del Agente IA</h1>
+      <p class="subtitle">
+        Contraste cuantitativo entre herramientas industriales de código estático (<strong>Semgrep SAST</strong>),
+        análisis de composición de dependencias (<strong>Trivy SCA</strong>), rastreo de flujo inter-archivo (<strong>Taint Tracker</strong>)
+        y triage semántico con <strong>LLM (Qwen2.5-Coder-7B)</strong> frente a 40 debilidades controladas.
+      </p>
+    </header>
+
+    <!-- KPI STATS -->
+    <div class="kpi-grid">
+      <div class="kpi-card kpi-purple">
+        <div class="kpi-label">Ground Truth (Reales)</div>
+        <div class="kpi-value">4</div>
+        <div class="kpi-detail">Vulnerabilidades controladas inyectadas</div>
+      </div>
+      <div class="kpi-card kpi-amber">
+        <div class="kpi-label">Detectadas por Semgrep</div>
+        <div class="kpi-value">0 / 4</div>
+        <div class="kpi-detail">Sensibilidad Semgrep: 0.0%</div>
+      </div>
+      <div class="kpi-card kpi-green">
+        <div class="kpi-label">Verificados por IA (TP)</div>
+        <div class="kpi-value">0</div>
+        <div class="kpi-detail">Vulnerabilidades reales confirmadas</div>
+      </div>
+      <div class="kpi-card kpi-blue">
+        <div class="kpi-label">Ruido Filtrado por IA (TN)</div>
+        <div class="kpi-value">94 / 99</div>
+        <div class="kpi-detail">Reducción de Falsos Positivos: <strong>0.0%</strong></div>
+      </div>
+      <div class="kpi-card kpi-cyan">
+        <div class="kpi-label">Precisión del Agente</div>
+        <div class="kpi-value">0.0%</div>
+        <div class="kpi-detail">F1-Score: <strong>0.0%</strong> | FPR: <strong>100.0%</strong></div>
+      </div>
+    </div>
+
+    <!-- CONTROLS -->
+    <div class="controls-panel">
+      <div class="tab-group">
+        <button class="tab-btn active" onclick="cambiarPestana('tab-gt')">🎯 Ground Truth (4)</button>
+        <button class="tab-btn" onclick="cambiarPestana('tab-ruido')">🧹 Ruido Semgrep (99)</button>
+        <button class="tab-btn" onclick="cambiarPestana('tab-comparativa')">📈 Comparativa Global</button>
+      </div>
+
+      <div class="search-group">
+        <input type="text" id="buscador" class="search-input" placeholder="🔍 Buscar por repositorio, CWE, archivo o palabra clave..." oninput="filtrarTablas()">
+      </div>
+    </div>
+
+    <!-- TAB 1: GROUND TRUTH TABLE -->
+    <div id="tab-gt" class="tab-content">
+      <div class="table-container">
+        <table id="tabla-gt">
+          <thead>
+            <tr>
+              <th style="width: 50px;">ID</th>
+              <th>Repositorio</th>
+              <th>Archivo y Sumidero</th>
+              <th>Taxonomía (CWE / OWASP)</th>
+              <th>Semgrep (SAST)</th>
+              <th>Trivy (SCA)</th>
+              <th>Agente IA (Veredicto)</th>
+              <th>Clasificación</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <tr class="gt-row" data-search="python_pyjwt jwt/api_jwk.py CWE-22 A01:2021-Broken Access Control Lectura de archivos arbitrarios mediante Path Traversal al concatenar rutas relativas con os.path.join sin normalización ni límites. FN">
+              <td class="code-font" style="font-weight: 700; color: var(--accent-cyan);">#1</td>
+              <td><strong>python_pyjwt</strong></td>
+              <td>
+                <div class="code-font">jwt/api_jwk.py:21</div>
+                
+                <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;">Lectura de archivos arbitrarios mediante Path Traversal al concatenar rutas relativas con os.path.join sin normalización ni límites.</div>
+                
+            <details>
+              <summary>Ver fragmento de código auditado</summary>
+              <pre class="snippet-code">def load_key_from_disk(self, base_folder: str, relative_path: str) -&gt; str:
+        target_path = os.path.join(base_folder, relative_path)
+        with open(target_path, &quot;r&quot;, encoding=&quot;utf-8&quot;) as key_file:
+            return key_file.read()</pre>
+            </details>
+            
+              </td>
+              <td>
+                <span class="badge badge-na code-font">CWE-22</span>
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">A01:2021-Broken Access Control</div>
+              </td>
+              <td><span class="badge badge-na">⚪ NO DETECTADO</span></td>
+              <td><span class="badge badge-na">⚪ N/A (Código)</span></td>
+              <td>
+                <span class="badge badge-na">⚪ OMITIDO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-fn">❌ FN (Descartado)</span></td>
+            </tr>
+
+            <tr class="gt-row" data-search="python_pyjwt jwt/api_jwt.py CWE-502 A08:2021-Software and Data Integrity Failures Deserialización no confiable de objetos mediante pickle.loads() que permite ejecución de código arbitrario. FN">
+              <td class="code-font" style="font-weight: 700; color: var(--accent-cyan);">#2</td>
+              <td><strong>python_pyjwt</strong></td>
+              <td>
+                <div class="code-font">jwt/api_jwt.py:44</div>
+                
+                <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;">Deserialización no confiable de objetos mediante pickle.loads() que permite ejecución de código arbitrario.</div>
+                
+            <details>
+              <summary>Ver fragmento de código auditado</summary>
+              <pre class="snippet-code">def decode_custom_payload(self, raw_bytes: bytes) -&gt; dict:
+        import pickle
+        return pickle.loads(raw_bytes)</pre>
+            </details>
+            
+              </td>
+              <td>
+                <span class="badge badge-na code-font">CWE-502</span>
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">A08:2021-Software and Data Integrity Failures</div>
+              </td>
+              <td><span class="badge badge-na">⚪ NO DETECTADO</span></td>
+              <td><span class="badge badge-na">⚪ N/A (Código)</span></td>
+              <td>
+                <span class="badge badge-na">⚪ OMITIDO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-fn">❌ FN (Descartado)</span></td>
+            </tr>
+
+            <tr class="gt-row" data-search="python_pyjwt jwt/jwks_client.py CWE-918 A10:2021-Server-Side Request Forgery Server-Side Request Forgery (SSRF) al descargar recursos JWKS de URLs externas sin validar direcciones de red privadas o loopback. FN">
+              <td class="code-font" style="font-weight: 700; color: var(--accent-cyan);">#3</td>
+              <td><strong>python_pyjwt</strong></td>
+              <td>
+                <div class="code-font">jwt/jwks_client.py:36</div>
+                
+                <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;">Server-Side Request Forgery (SSRF) al descargar recursos JWKS de URLs externas sin validar direcciones de red privadas o loopback.</div>
+                
+            <details>
+              <summary>Ver fragmento de código auditado</summary>
+              <pre class="snippet-code">def fetch_untrusted_jwk_endpoint(self, custom_url: str) -&gt; dict:
+        import urllib.request
+        with urllib.request.urlopen(custom_url, timeout=5) as response:
+            return json.loads(response.read().decode())</pre>
+            </details>
+            
+              </td>
+              <td>
+                <span class="badge badge-na code-font">CWE-918</span>
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">A10:2021-Server-Side Request Forgery</div>
+              </td>
+              <td><span class="badge badge-na">⚪ NO DETECTADO</span></td>
+              <td><span class="badge badge-na">⚪ N/A (Código)</span></td>
+              <td>
+                <span class="badge badge-na">⚪ OMITIDO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-fn">❌ FN (Descartado)</span></td>
+            </tr>
+
+            <tr class="gt-row" data-search="python_pyjwt jwt/utils.py CWE-78 A03:2021-Injection Inyección de comandos OS inter-archivo en execute_system_backup invocada desde api_jwk.py:sync_remote_key_backup mediante subprocess.run con shell=True. FN">
+              <td class="code-font" style="font-weight: 700; color: var(--accent-cyan);">#37</td>
+              <td><strong>python_pyjwt</strong></td>
+              <td>
+                <div class="code-font">jwt/utils.py:153</div>
+                
+                <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;">Inyección de comandos OS inter-archivo en execute_system_backup invocada desde api_jwk.py:sync_remote_key_backup mediante subprocess.run con shell=True.</div>
+                
+            <details>
+              <summary>Ver fragmento de código auditado</summary>
+              <pre class="snippet-code">def execute_system_backup(key_identifier: str, backup_target: str) -&gt; int:
+    &quot;&quot;&quot;TESTBED_INJECTION: Inter-file OS Command Injection Sink (CWE-78 / A03:2021).&quot;&quot;&quot;
+    import subprocess
+    cmd = f&quot;cp /tmp/{key_identifier}.key {backup_target}&quot;
+    return subprocess.run(cmd, shell=True).returncode</pre>
+            </details>
+            
+              </td>
+              <td>
+                <span class="badge badge-na code-font">CWE-78</span>
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">A03:2021-Injection</div>
+              </td>
+              <td><span class="badge badge-na">⚪ NO DETECTADO</span></td>
+              <td><span class="badge badge-na">⚪ N/A (Código)</span></td>
+              <td>
+                <span class="badge badge-na">⚪ OMITIDO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-fn">❌ FN (Descartado)</span></td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 2: SEMGREP NOISE TABLE -->
+    <div id="tab-ruido" class="tab-content" style="display: none;">
+      <div class="table-container">
+        <table id="tabla-ruido">
+          <thead>
+            <tr>
+              <th>Repositorio</th>
+              <th>Archivo y Línea</th>
+              <th>Alerta Reportada por Semgrep</th>
+              <th>¿Era Vulnerable?</th>
+              <th>Veredicto del Agente IA</th>
+              <th>Resultado del Triage</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/algorithms.py get_default_algorithms N/A NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/algorithms.py:142</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">get_default_algorithms...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">N/A</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">N/A</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box"></div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/algorithms.py Algorithm.compute_hash_digest N/A NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/algorithms.py:184</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">Algorithm.compute_hash_digest...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">N/A</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">N/A</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box"></div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/algorithms.py Algorithm.check_crypto_key_type Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/algorithms.py:206</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">Algorithm.check_crypto_key_type...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/algorithms.py Algorithm.to_jwk Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/algorithms.py:258</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">Algorithm.to_jwk...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/algorithms.py NoneAlgorithm.prepare_key Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/algorithms.py:290</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">NoneAlgorithm.prepare_key...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/algorithms.py HMACAlgorithm._is_der_key Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/algorithms.py:328</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">HMACAlgorithm._is_der_key...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/algorithms.py HMACAlgorithm.prepare_key Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/algorithms.py:346</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">HMACAlgorithm.prepare_key...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/algorithms.py HMACAlgorithm.to_jwk Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/algorithms.py:451</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">HMACAlgorithm.to_jwk...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/algorithms.py HMACAlgorithm.from_jwk Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/algorithms.py:463</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">HMACAlgorithm.from_jwk...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/algorithms.py HMACAlgorithm.check_key_length Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/algorithms.py:482</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">HMACAlgorithm.check_key_length...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/algorithms.py RSAAlgorithm.check_key_length Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/algorithms.py:521</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">RSAAlgorithm.check_key_length...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/algorithms.py RSAAlgorithm.prepare_key Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/algorithms.py:530</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">RSAAlgorithm.prepare_key...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/algorithms.py RSAAlgorithm.to_jwk Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/algorithms.py:572</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">RSAAlgorithm.to_jwk...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/algorithms.py RSAAlgorithm.from_jwk Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/algorithms.py:611</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">RSAAlgorithm.from_jwk...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/algorithms.py RSAAlgorithm.sign Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/algorithms.py:682</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">RSAAlgorithm.sign...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/algorithms.py RSAAlgorithm.verify Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/algorithms.py:686</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">RSAAlgorithm.verify...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/algorithms.py ECAlgorithm.__init__ Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/algorithms.py:708</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">ECAlgorithm.__init__...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/algorithms.py ECAlgorithm._validate_curve Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/algorithms.py:716</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">ECAlgorithm._validate_curve...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/algorithms.py ECAlgorithm.prepare_key Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/algorithms.py:727</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">ECAlgorithm.prepare_key...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/algorithms.py ECAlgorithm.sign Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/algorithms.py:760</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">ECAlgorithm.sign...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/algorithms.py ECAlgorithm.verify Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/algorithms.py:765</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">ECAlgorithm.verify...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/algorithms.py ECAlgorithm.to_jwk Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/algorithms.py:791</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">ECAlgorithm.to_jwk...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/algorithms.py ECAlgorithm.from_jwk Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/algorithms.py:835</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">ECAlgorithm.from_jwk...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/algorithms.py RSAPSSAlgorithm.sign Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/algorithms.py:913</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">RSAPSSAlgorithm.sign...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/algorithms.py RSAPSSAlgorithm.verify Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/algorithms.py:924</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">RSAPSSAlgorithm.verify...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/algorithms.py OKPAlgorithm.prepare_key Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/algorithms.py:961</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">OKPAlgorithm.prepare_key...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/algorithms.py OKPAlgorithm.sign Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/algorithms.py:983</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">OKPAlgorithm.sign...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/algorithms.py OKPAlgorithm.verify Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/algorithms.py:997</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">OKPAlgorithm.verify...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/algorithms.py OKPAlgorithm.to_jwk Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/algorithms.py:1032</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">OKPAlgorithm.to_jwk...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/algorithms.py OKPAlgorithm.from_jwk Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/algorithms.py:1079</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">OKPAlgorithm.from_jwk...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jwk.py PyJWK.sync_remote_key_backup Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jwk.py:26</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWK.sync_remote_key_backup...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jwk.py PyJWK.__init__ Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jwk.py:32</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWK.__init__...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jwk.py PyJWK.from_dict Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jwk.py:102</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWK.from_dict...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jwk.py PyJWK.from_json Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jwk.py:114</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWK.from_json...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jwk.py PyJWK.key_type Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jwk.py:128</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWK.key_type...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jwk.py PyJWK.key_id Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jwk.py:136</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWK.key_id...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jwk.py PyJWK.public_key_use Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jwk.py:144</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWK.public_key_use...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jwk.py PyJWKSet.__init__ Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jwk.py:153</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWKSet.__init__...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jwk.py PyJWKSet.from_dict Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jwk.py:180</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWKSet.from_dict...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jwk.py PyJWKSet.from_json Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jwk.py:185</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWKSet.from_json...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jwk.py PyJWKSet.__getitem__ Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jwk.py:189</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWKSet.__getitem__...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jwk.py PyJWTSetWithTimestamp.__init__ Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jwk.py:200</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWTSetWithTimestamp.__init__...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jws.py PyJWS.__init__ Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jws.py:39</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWS.__init__...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jws.py PyJWS.register_algorithm Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jws.py:62</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWS.register_algorithm...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jws.py PyJWS.unregister_algorithm Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jws.py:79</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWS.unregister_algorithm...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jws.py PyJWS.get_algorithms Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jws.py:94</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWS.get_algorithms...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jws.py PyJWS.get_algorithm_by_name Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jws.py:102</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWS.get_algorithm_by_name...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jws.py PyJWS.encode Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jws.py:123</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWS.encode...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jws.py PyJWS.decode_complete Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jws.py:222</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWS.decode_complete...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jws.py PyJWS.decode Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jws.py:293</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWS.decode...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jws.py PyJWS.get_unverified_header Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jws.py:315</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWS.get_unverified_header...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jws.py PyJWS._decode_base64url_segment Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jws.py:327</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWS._decode_base64url_segment...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jws.py PyJWS._load Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jws.py:356</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWS._load...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jws.py PyJWS._verify_signature Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jws.py:397</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWS._verify_signature...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jws.py PyJWS._validate_headers Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jws.py:451</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWS._validate_headers...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jws.py PyJWS._validate_kid Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jws.py:459</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWS._validate_kid...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jws.py PyJWS._validate_crit Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jws.py:463</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWS._validate_crit...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jwt.py PyJWT.__init__ Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jwt.py:47</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWT.__init__...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jwt.py PyJWT._get_default_options Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jwt.py:56</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWT._get_default_options...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jwt.py PyJWT._get_sig_options Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jwt.py:71</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWT._get_sig_options...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jwt.py PyJWT._merge_options Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jwt.py:79</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWT._merge_options...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jwt.py PyJWT.encode Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jwt.py:96</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWT.encode...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jwt.py PyJWT._encode_payload Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jwt.py:162</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWT._encode_payload...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jwt.py PyJWT.decode_complete Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jwt.py:180</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWT.decode_complete...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jwt.py PyJWT._decode_payload Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jwt.py:293</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWT._decode_payload...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jwt.py PyJWT.decode Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jwt.py:309</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWT.decode...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jwt.py PyJWT._validate_claims Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jwt.py:388</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWT._validate_claims...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jwt.py PyJWT._validate_required_claims Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jwt.py:430</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWT._validate_required_claims...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jwt.py PyJWT._validate_sub Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jwt.py:439</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWT._validate_sub...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jwt.py PyJWT._validate_jti Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jwt.py:460</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWT._validate_jti...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jwt.py PyJWT._validate_iat Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jwt.py:474</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWT._validate_iat...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jwt.py PyJWT._validate_nbf Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jwt.py:489</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWT._validate_nbf...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jwt.py PyJWT._validate_exp Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jwt.py:503</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWT._validate_exp...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jwt.py PyJWT._validate_aud Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jwt.py:519</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWT._validate_aud...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/api_jwt.py PyJWT._validate_iss Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/api_jwt.py:569</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWT._validate_iss...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/help.py info Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/help.py:15</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">info...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/help.py main Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/help.py:60</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">main...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/jwk_set_cache.py JWKSetCache.__init__ Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/jwk_set_cache.py:9</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">JWKSetCache.__init__...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/jwk_set_cache.py JWKSetCache.put Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/jwk_set_cache.py:13</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">JWKSetCache.put...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/jwk_set_cache.py JWKSetCache.get Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/jwk_set_cache.py:35</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">JWKSetCache.get...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/jwk_set_cache.py JWKSetCache.is_expired Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/jwk_set_cache.py:41</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">JWKSetCache.is_expired...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/jwks_client.py PyJWKClient.__init__ Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/jwks_client.py:40</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWKClient.__init__...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/jwks_client.py PyJWKClient.fetch_data Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/jwks_client.py:152</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWKClient.fetch_data...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/jwks_client.py PyJWKClient.get_jwk_set Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/jwks_client.py:195</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWKClient.get_jwk_set...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/jwks_client.py PyJWKClient._as_jwk_set_payload Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/jwks_client.py:233</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWKClient._as_jwk_set_payload...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/jwks_client.py PyJWKClient.get_signing_keys Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/jwks_client.py:239</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWKClient.get_signing_keys...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/jwks_client.py PyJWKClient._get_signing_keys_from_jwk_set Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/jwks_client.py:256</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWKClient._get_signing_keys_from_jwk_set...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/jwks_client.py PyJWKClient.get_signing_key Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/jwks_client.py:268</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWKClient.get_signing_key...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/jwks_client.py PyJWKClient.get_signing_key_from_jwt Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/jwks_client.py:305</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWKClient.get_signing_key_from_jwt...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/jwks_client.py PyJWKClient.match_kid Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/jwks_client.py:321</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">PyJWKClient.match_kid...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/utils.py force_bytes Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/utils.py:16</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">force_bytes...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/utils.py base64url_decode Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/utils.py:25</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">base64url_decode...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/utils.py to_base64url_uint Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/utils.py:40</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">to_base64url_uint...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/utils.py from_base64url_uint Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/utils.py:52</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">from_base64url_uint...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/utils.py number_to_bytes Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/utils.py:57</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">number_to_bytes...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/utils.py bytes_from_int Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/utils.py:66</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">bytes_from_int...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/utils.py der_to_raw_signature Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/utils.py:74</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">der_to_raw_signature...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/utils.py raw_to_der_signature Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/utils.py:83</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">raw_to_der_signature...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+            <tr class="ruido-row" data-search="python_pyjwt jwt/utils.py is_pem_format Desconocido NO_EVALUADO">
+              <td><strong>python_pyjwt</strong></td>
+              <td class="code-font">jwt/utils.py:123</td>
+              <td>
+                <div style="font-size: 0.8rem; font-weight: 500;">is_pem_format...</div>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-na code-font">Desconocido</span>
+                  <span class="badge badge-na" style="font-size: 0.7rem;">Desconocido</span>
+                </div>
+              </td>
+              <td><span class="badge badge-fn">❌ NO (Código Seguro / Config)</span></td>
+              <td>
+                <span class="badge badge-na">NO EVALUADO</span>
+                <div class="explanation-box">Omitido por límite de ejecución</div>
+              </td>
+              <td><span class="badge badge-na">⚪ Pendiente de Auditoría</span></td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 3: GLOBAL COMPARISON -->
+    <div id="tab-comparativa" class="tab-content" style="display: none;">
+      <div class="comparison-grid">
+        <div class="comparison-box">
+          <h3>🔍 Semgrep Standalone (SAST Tradicional)</h3>
+          <div class="metric-row">
+            <span class="metric-name">Vulnerabilidades Reales Detectadas</span>
+            <span class="metric-val">0 / 4 (0.0%)</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">Falsas Alarmas Generadas (Ruido)</span>
+            <span class="metric-val" style="color: var(--accent-amber);">99 alertas</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">Razón Señal / Ruido</span>
+            <span class="metric-val">0:99 (1 vuln real cada 99.0 alertas)</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">Capacidad de Razonamiento de Contexto</span>
+            <span class="metric-val" style="color: var(--accent-red);">No (Solo coincidencia sintáctica)</span>
+          </div>
+        </div>
+
+        <div class="comparison-box">
+          <h3>🤖 Pipeline Híbrido: Semgrep + Taint Tracker + Agente IA</h3>
+          <div class="metric-row">
+            <span class="metric-name">Verdaderos Positivos Confirmados (TP)</span>
+            <span class="metric-val" style="color: var(--accent-green);">0</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">Ruido Eliminado Exitosamente (TN)</span>
+            <span class="metric-val" style="color: var(--accent-cyan);">94 / 99 (0.0%)</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">Precisión del Sistema (Precision)</span>
+            <span class="metric-val" style="color: var(--accent-cyan);">0.0%</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">F1-Score</span>
+            <span class="metric-val" style="color: var(--accent-green);">0.0%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      Generado automáticamente por el Pipeline SAST Inteligente &bull; Antigravity IDE &bull; Deepmind Team
+    </footer>
+  </div>
+
+  <script>
+    function cambiarPestana(idTab) {
+      document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(idTab).style.display = 'block';
+      event.target.classList.add('active');
+    }
+
+    function filtrarTablas() {
+      const query = document.getElementById('buscador').value.toLowerCase().trim();
+      
+      document.querySelectorAll('#tabla-gt tbody tr').forEach(row => {
+        const text = row.getAttribute('data-search') ? row.getAttribute('data-search').toLowerCase() : '';
+        row.style.display = text.includes(query) ? '' : 'none';
+      });
+
+      document.querySelectorAll('#tabla-ruido tbody tr').forEach(row => {
+        const text = row.getAttribute('data-search') ? row.getAttribute('data-search').toLowerCase() : '';
+        row.style.display = text.includes(query) ? '' : 'none';
+      });
+    }
+  </script>
+</body>
+</html>

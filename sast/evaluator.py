@@ -46,11 +46,18 @@ def coincide_con_ground_truth(
     if not (arch_h == arch_gt or arch_h.endswith(arch_gt) or arch_gt.endswith(arch_h)):
         return False
 
-    linea_h = int(hallazgo.get("linea", 0))
     linea_gt = int(gt_item.get("linea", 0))
 
-    # Si la línea está dentro del rango de tolerancia
-    if abs(linea_h - linea_gt) <= tolerancia_lineas:
+    # 1. Si el hallazgo proviene de extracción AST y tiene rango de líneas de función
+    l_ini = hallazgo.get("linea_inicio")
+    l_fin = hallazgo.get("linea_fin")
+    if l_ini is not None and l_fin is not None:
+        if (int(l_ini) - 3) <= linea_gt <= (int(l_fin) + 3):
+            return True
+
+    # 2. Si tiene linea o linea_impacto puntual
+    linea_h = int(hallazgo.get("linea_impacto") or hallazgo.get("linea") or 0)
+    if linea_h > 0 and abs(linea_h - linea_gt) <= tolerancia_lineas:
         return True
 
     return False
@@ -59,7 +66,8 @@ def coincide_con_ground_truth(
 def evaluar_hallazgos_ground_truth(
     resultados: List[Dict[str, Any]],
     ground_truth_path: str,
-    tolerancia_lineas: int = 15
+    tolerancia_lineas: int = 15,
+    repo_filter: Optional[str] = None
 ) -> Dict[str, Any]:
     """
     Compara la lista de veredictos del LLM contra el ground_truth.json.
@@ -73,6 +81,8 @@ def evaluar_hallazgos_ground_truth(
       - cwe_predicho: (opcional)
     """
     ground_truth = cargar_ground_truth(ground_truth_path)
+    if repo_filter:
+        ground_truth = [gt for gt in ground_truth if gt.get("repo") == repo_filter]
 
     tp_items = []
     fp_items = []
